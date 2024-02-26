@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+//Typography
+//////////////////////////////////
+//Colors
+$black: #313131;
+$white: #fff;
+$white-fade: rgba(255, 255, 255, .9);
+$blue-light: #d3f1f7;
+$blue-light1: #C6E9EE;
+$blue-light1-fade: #c6e9eee7;
+$blue-vivid: #61c1d0;
+$blue-vivid-fade: #61c1d0c9;
+$orange: #DA564F;
+$red: #860000;
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-image: url('assets/images/background.jpg');
+}
+
+::ng-deep .mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {
+  border-right-style: hidden;
+}
+
+::ng-deep .mat-mdc-input-element {
+  &::placeholder {
+    opacity: 0 !important;
+  }
+
+  &:focus {
+    &::placeholder {
+      opacity: 1 !important;
+    }
+  }
+}
+
+button {
+  &.default {
+    transition: all .3s ease-in-out;
+
+    @apply
+      rounded-xl
+      text-xl
+      h-14
+      px-8;
+
+    &:hover{
+      scale: 1.01;
+    }
+
+    &:disabled {
+      opacity: .5;
+      pointer-events: none;
+    }
+  }
+}
+
+.title {
+  @apply
+    text-3xl
+    font-bold
+    self-center;
+
+    @screen md {
+      @apply
+        text-4xl;
+    }
+}

@@ -1,0 +1,69 @@
+@import 'src/styles.scss';
+
+#details-component {
+  @apply
+  w-screen
+  h-screen
+  mx-0
+  flex
+  justify-center
+  items-center;
+
+  @screen md {
+    @apply
+      w-4/5
+      mx-auto;
+  }
+
+  @screen lg {
+    @apply
+      w-4/5
+      mx-0
+      pl-40
+      justify-start;
+  }
+
+  @screen xl {
+    @apply
+      w-3/4;
+  }
+
+  @screen 2xl {
+    @apply
+      w-2/3
+  }
+
+  #details-section{
+    border-color: $black;
+    background-color: $white-fade;
+
+    @apply
+      w-screen
+      p-5
+      flex
+      flex-col
+      justify-center
+      rounded-3xl
+      bg-opacity-60
+      shadow-2xl;
+
+    @screen sm {
+      @apply
+        container
+        border
+        border-solid
+        rounded-3xl;
+    }
+
+    .details-container {
+      background-color: $blue-light1-fade;
+
+        @apply
+          w-full
+          transition-all
+          p-10
+          rounded-2xl
+          shadow-md;
+    }
+  }
+}

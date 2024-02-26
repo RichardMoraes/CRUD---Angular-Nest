@@ -1,0 +1,143 @@
+
+
+<main id="details-component">
+  <section id="details-section">
+    <div id="details-container">
+      <ng-container *ngIf="entityForm">
+        <form [formGroup]="entityForm">
+          <header>
+            <h1 class="title">
+              {{ entityFormType == 'edit' ? 'Editar' : 'Criar' }} Entidade
+            </h1>
+            <ng-container *ngIf="entityFormType === 'edit'">
+              <button mat-raised-button class="default">
+                Excluir
+              </button>
+            </ng-container>
+          </header>
+          <div class="w-full flex flex-col">
+            <div class="inputs-grid">
+              <!-- Company Name Form Field -->
+              <mat-form-field class="col-span-1 md:col-span-2 lg:col-span-3" appearance="fill">
+                <mat-label>Razão Social</mat-label>
+                <input matInput formControlName="company_name"
+                  placeholder="Example Company Name"
+                  required
+                >
+                <!-- Handling Company Name Error -->
+                <mat-error *ngIf="entityForm.get('company_name')?.invalid">
+                  {{ shared.getErrorMessage({group: entityForm, control: 'company_name'}) }}
+                </mat-error>
+              </mat-form-field>
+              <!-- Fantasy Name Form Field -->
+              <mat-form-field appearance="fill">
+                <mat-label>Nome Fantasia</mat-label>
+                <input matInput formControlName="fantasy_name"
+                  placeholder="Example Fantasy Name"
+                  required
+                >
+                <!-- Handling Fantasy Name Error -->
+                <mat-error *ngIf="entityForm.get('fantasy_name')?.invalid">
+                  {{ shared.getErrorMessage({group: entityForm, control: 'fantasy_name'}) }}
+                </mat-error>
+              </mat-form-field>
+              <!-- CNPJ Form Field -->
+              <mat-form-field appearance="fill">
+                <mat-label>CNPJ</mat-label>
+                <input matInput formControlName="cnpj"
+                  placeholder="00.111.628/0001-54"
+                  mask="00.000.000/0000-00"
+                  [validation]="true"
+                  required
+                >
+                <!-- Handling CNPJ Error -->
+                <mat-error *ngIf="entityForm.get('cnpj')?.invalid">
+                  {{ shared.getErrorMessage({group: entityForm, control: 'cnpj'}) }}
+                </mat-error>
+              </mat-form-field>
+              <!-- Opening Date Form Field -->
+              <mat-form-field class="date-picker" appearance="fill">
+                <mat-label>Data de Inauguração</mat-label>
+                <input matInput formControlName="opening_date" readonly
+                class="cursor-pointer"
+                placeholder="01/01/2024"
+                [matDatepicker]="datePicker"
+                (click)="datePicker.open()"
+                required>
+                <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                <mat-datepicker #datePicker></mat-datepicker>
+                <!-- Handling Opening Date Error -->
+                <mat-error *ngIf="entityForm.get('opening_date')?.invalid">
+                  {{ shared.getErrorMessage({group: entityForm, control: 'opening_date'}) }}
+                </mat-error>
+              </mat-form-field>
+              <!-- Region Form Field -->
+              <mat-form-field appearance="fill">
+                <mat-label>Regional</mat-label>
+                <mat-select matInput formControlName="region"
+                required>
+                  <ng-container *ngFor="let region of regionsList">
+                    <mat-option [value]="region.value">
+                      {{ region.label }}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+                <!-- Handling Region Error -->
+                <mat-error *ngIf="entityForm.get('region')?.invalid">
+                  {{ shared.getErrorMessage({group: entityForm, control: 'region'}) }}
+                </mat-error>
+              </mat-form-field>
+              <!-- Medical Specialties Form Field -->
+              <mat-form-field appearance="fill">
+                <mat-label>Especialidades Médicas</mat-label>
+                <mat-select formControlName="medical_specialties" multiple required>
+                  <mat-select-trigger>
+                      <ng-container *ngIf="medicalSpecialtiesList && medicalSpecialties?.value?.length > 0">
+                        {{ filterSpecialtyLabel(medicalSpecialties.value[0], medicalSpecialtiesList) }}
+                      </ng-container>
+                      <ng-container *ngIf="medicalSpecialties.value?.length > 1">
+                        <span class="text-xs" >
+                          (+{{medicalSpecialties.value.length - 1}} {{medicalSpecialties.value.length === 2 ? 'Outro' : 'Outros'}})
+                        </span>
+                      </ng-container>
+                  </mat-select-trigger>
+                  <ng-container *ngFor="let specialty of medicalSpecialtiesList">
+                    <mat-option [value]="specialty.value">
+                      {{ specialty.label }}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+                <!-- Handling Medical Specialties Error -->
+                <mat-error *ngIf="entityForm.get('medical_specialties')?.invalid">
+                  {{ shared.getErrorMessage({group: entityForm, control: 'medical_specialties'}) }}
+                </mat-error>
+              </mat-form-field>
+              <!-- Active Form Field -->
+              <mat-checkbox formControlName="active" class="checkbox">
+                Ativa
+              </mat-checkbox>
+            </div>
+            <br>
+            <nav class="buttons-nav">
+              <div class="w-full md:w-3/5 xl:w-2/5 max-xs:flex-col-reverse flex justify-around items-center gap-5">
+                <button mat-raised-button type="submit" class="default cancel"
+                [routerLink]="['/']">
+                  Cancelar
+                </button>
+                <button mat-raised-button type="submit" class="default"
+                [disabled]="entityForm.invalid">
+                  Enviar
+                </button>
+              </div>
+              <ng-container *ngIf="entityFormType === 'edit'">
+                <button mat-raised-button class="mobile-delete default">
+                  Excluir
+                </button>
+              </ng-container>
+            </nav>
+          </div>
+        </form>
+      </ng-container>
+    </div>
+  </section>
+</main>

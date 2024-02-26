@@ -1,0 +1,275 @@
+@import 'src/styles.scss';
+
+#details-component {
+  @apply
+  w-screen
+  h-screen
+  mx-0
+  flex
+  justify-center
+  items-center;
+
+  @screen md {
+    @apply
+      w-4/5
+      mx-auto;
+  }
+
+  @screen lg {
+    @apply
+      w-4/5
+      mx-0
+      pl-40
+      justify-start;
+  }
+
+  @screen xl {
+    @apply
+      w-3/4;
+  }
+
+  @screen 2xl {
+    @apply
+      w-2/3
+  }
+
+  #details-section{
+    border-color: $black;
+    background-color: $white-fade;
+
+    @apply
+      w-screen
+      h-full
+      p-5
+      flex
+      flex-col
+      justify-start
+      border-none;
+
+    @screen md {
+      @apply
+        container
+        border-solid
+        rounded-3xl
+        justify-center;
+    }
+
+    @screen lg {
+      background-color: transparent;
+
+      @apply
+        border-none;
+    }
+
+    #details-container {
+      background-color: $blue-light1-fade;
+
+
+      @apply
+        w-full
+        h-full
+        flex
+        justify-center
+        items-center
+        transition-all
+        p-5
+        rounded-2xl
+        shadow-md;
+
+      @screen lg {
+        background-color: transparent;
+
+        @apply
+          border-none
+          shadow-none;
+      }
+
+      form {
+        scrollbar-width: none;
+
+        @apply
+          w-full
+          h-full
+          py-3
+          flex
+          flex-col
+          gap-8
+          overflow-y-scroll
+          rounded-t-2xl
+          items-center;
+
+          @screen md {
+            @apply
+              gap-10
+              justify-center;
+          }
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
+        header {
+          @apply
+          w-full
+          flex
+          flex-col
+          gap-5
+          justify-between;
+
+          @screen md {
+            @apply
+              flex-row;
+          }
+
+          button {
+            @apply
+              h-10
+              px-5
+              hidden
+              text-base;
+
+            @screen md {
+              @apply
+                block;
+            }
+
+            &.default {
+              background-color: $black;
+              color: $white;
+            }
+          }
+        }
+
+        .inputs-grid {
+          @apply
+            grid
+            grid-cols-1
+            gap-2;
+
+          @screen md {
+            @apply
+              grid-cols-2;
+          }
+
+          @screen lg {
+            @apply
+              grid-cols-3;
+          }
+
+          ::ng-deep .mat-form-field {
+              .mat-form-field-underline {
+                display: none;
+              }
+
+            .mat-form-field-flex {
+              background-color: $white;
+
+              @apply
+                text-lg
+                rounded-3xl
+                shadow-md;
+
+              @screen lg {
+                @apply
+                  shadow-xl;
+              }
+            }
+
+            input {
+              &:-webkit-autofill,
+              &:-webkit-autofill:hover,
+              &:-webkit-autofill:focus,
+              &:-webkit-autofill:active {
+                transition: background-color 5000s ease-in-out 0s;
+              }
+            }
+          }
+
+          ::ng-deep .checkbox {
+            @apply
+              h-4/5
+              flex
+              items-center
+              pl-5;
+
+            &.mat-checkbox-checked {
+              .mat-checkbox {
+                &-ripple {
+                  border-color: $orange;
+                }
+                &-background {
+                  background-color: $orange;
+                }
+              }
+            }
+
+            .mat-checkbox-inner-container {
+              @apply
+                w-6
+                h-6
+                rounded-lg;
+
+              .mat-checkbox-frame, .mat-checkbox-background{
+                @apply
+                  rounded-full;
+              }
+            }
+
+            .mat-checkbox-label {
+              @apply
+              text-lg
+              pl-1;
+            }
+          }
+        }
+
+        .buttons-nav {
+          @apply
+            flex
+            flex-col-reverse
+            align-middle
+            justify-end
+            gap-5;
+
+          @screen md {
+            @apply
+              gap-10
+              flex-row;
+          }
+
+          button {
+            @apply
+              px-10
+              text-xl;
+
+            &.default {
+              background-color: $orange;
+              color: $white;
+
+              @apply
+                w-full;
+            }
+
+            &.cancel {
+              background-color: $blue-vivid;
+              color: $white;
+
+              @apply
+                w-full;
+            }
+
+            &.mobile-delete {
+              background-color: $black;
+              color: $white;
+
+              @screen md {
+                @apply
+                  hidden;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

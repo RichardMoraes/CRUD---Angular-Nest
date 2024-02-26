@@ -1,0 +1,139 @@
+@import 'src/styles.scss';
+
+#login {
+  @apply
+    w-screen
+    h-screen
+    mx-0
+    flex
+    justify-center
+    items-center;
+
+  @screen md {
+    @apply
+      w-4/5
+      mx-auto;
+  }
+
+  @screen lg {
+    @apply
+      w-3/5
+      mx-0
+      pl-40
+      justify-start;
+  }
+
+  @screen xl {
+    @apply
+      w-3/5;
+  }
+  @screen xl {
+    @apply
+      max-w-4xl;
+  }
+
+
+  #login-container{
+    border-color: $black;
+    background-color: $white-fade;
+
+    @apply
+      w-screen
+      px-10
+      pt-10
+      pb-5
+      flex
+      flex-col
+      justify-center
+      rounded-none
+      bg-opacity-60
+      shadow-2xl;
+
+    @screen sm {
+      @apply
+        container
+        border
+        border-solid
+        rounded-3xl;
+    }
+
+    #login-form {
+      .title {
+        @apply
+          text-center;
+      }
+
+      .forms {
+        ::ng-deep .mat-form-field {
+          @apply
+            pt-3
+            px-2
+            bg-transparent
+            border-none
+            rounded-t-lg
+            text-2xl;
+
+            label {
+              color: $black;
+
+              @apply
+                text-lg;
+            }
+
+            input {
+              @apply
+                bg-transparent;
+
+                &:-webkit-autofill,
+                &:-webkit-autofill:hover,
+                &:-webkit-autofill:focus,
+                &:-webkit-autofill:active {
+                  transition: background-color 5000s ease-in-out 0s;
+                }
+            }
+        }
+
+        ::ng-deep .mat-error {
+          @apply
+            text-base;
+
+          color: $orange;
+        }
+
+        input[type=password]::-ms-reveal,
+        input[type=password]::-ms-clear
+        {
+            display: none;
+        }
+
+
+      }
+
+      button.default {
+        background-color: $orange;
+        color: $white;
+      }
+    }
+
+    #register {
+      align-self: center;
+
+      @apply
+        mt-5;
+
+      a {
+        color: $black;
+        font-weight: 600;
+        transition: opacity .1s ease-in;
+        text-decoration: underline;
+
+        @apply
+          text-sm;
+
+        &:hover {
+          opacity: .6;
+        }
+      }
+    }
+  }
+}

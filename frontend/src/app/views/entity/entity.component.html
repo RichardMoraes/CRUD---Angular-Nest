@@ -1,0 +1,70 @@
+
+
+<main id="details-component">
+  <section id="details-section">
+    <div id="details-container">
+      <ng-container>
+        <form [formGroup]="entityForm">
+          <header>
+            <h1 class="title">
+              Visualizar Entidade
+            </h1>
+              <button mat-raised-button class="default" [routerLink]="['editar']">
+                Editar
+              </button>
+          </header>
+          <div class="w-full flex flex-col">
+            <div class="inputs-grid">
+              <!-- Company Name Form Field -->
+              <mat-form-field class="col-span-1 md:col-span-2 lg:col-span-3" appearance="fill">
+                <mat-label>Razão Social</mat-label>
+                <input matInput formControlName="company_name" readonly>
+              </mat-form-field>
+              <!-- Fantasy Name Form Field -->
+              <mat-form-field appearance="fill">
+                <mat-label>Nome Fantasia</mat-label>
+                <input matInput formControlName="fantasy_name" readonly>
+              </mat-form-field>
+              <!-- CNPJ Form Field -->
+              <mat-form-field appearance="fill">
+                <mat-label>CNPJ</mat-label>
+                <input matInput formControlName="cnpj" readonly>
+              </mat-form-field>
+              <!-- Opening Date Form Field -->
+              <mat-form-field class="date-picker" appearance="fill">
+                <mat-label>Data de Inauguração</mat-label>
+                <input matInput formControlName="opening_date" readonly>
+              </mat-form-field>
+              <!-- Region Form Field -->
+              <mat-form-field appearance="fill">
+                <mat-label>Regional</mat-label>
+                <input matInput formControlName="region" readonly>
+              </mat-form-field>
+              <!-- Medical Specialties Form Field -->
+              <mat-form-field appearance="fill">
+                <mat-label>Especialidades Médicas</mat-label>
+                <input matInput formControlName="medical_specialties" readonly>
+              </mat-form-field>
+              <!-- Active Form Field -->
+              <mat-form-field appearance="fill">
+                <mat-label>Ativo</mat-label>
+                <input matInput formControlName="active" readonly>
+              </mat-form-field>
+            </div>
+            <br>
+            <nav class="buttons-nav">
+              <button mat-raised-button type="submit" class="default mobile"
+              [routerLink]="['editar']">
+                Editar
+              </button>
+              <button mat-raised-button type="submit" class="default cancel"
+              [routerLink]="['/list']">
+                Voltar
+              </button>
+            </nav>
+          </div>
+        </form>
+      </ng-container>
+    </div>
+  </section>
+</main>

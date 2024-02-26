@@ -1,0 +1,15 @@
+<section class="w-screen h-screen relative">
+  <img src="../../../assets/images/background/wave-blue.png" alt="Blue wave" class="absolute right-0 h-screen" #blueWave>
+  <img src="../../../assets/images/background/wave-orange.png" alt="Orange wave" class="absolute right-0 h-screen" #orangeWave>
+  <img src="../../../assets/images/background/wave-white.png" alt="White wave" class="absolute right-0 h-screen" #whiteWave>
+  <ng-container *ngIf="asideMenu">
+    <aside class="absolute z-50 left-5 top-5">
+      <div class="">
+        <button mat-fab extended
+        (click)="logout()">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </aside>
+  </ng-container>
+</section>

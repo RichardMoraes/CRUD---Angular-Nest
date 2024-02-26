@@ -1,0 +1,55 @@
+<section id="login">
+  <div id="login-container">
+    <ng-container *ngIf="loginForm">
+      <form id="login-form" [formGroup]="loginForm" (submit)="onSubmit($event)" class="flex flex-col gap-8">
+        <h1 class="title">
+          Login
+        </h1>
+        <div class="flex flex-col gap-2">
+          <div class="forms flex flex-col gap-3">
+            <!-- Email Form Field -->
+            <mat-form-field>
+              <mat-label>E-mail</mat-label>
+              <input matInput formControlName="email"
+                placeholder="email@exemplo.com"
+                required
+              >
+              <!-- Handling Email Error -->
+              <mat-error *ngIf="loginForm.get('email')?.invalid">
+                {{ shared.getErrorMessage({group: loginForm, control: 'email'}) }}
+              </mat-error>
+            </mat-form-field>
+            <!-- Password Form Field -->
+            <mat-form-field>
+              <mat-label>Senha</mat-label>
+              <input matInput formControlName="password"
+                placeholder="Senha@123"
+                [type]="hidePassword ? 'password' : 'text'"
+                required
+              >
+              <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Esconder senha'" [attr.aria-pressed]="hidePassword">
+                <mat-icon class="hide-icon">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <!-- Handling Password Error -->
+              <mat-error *ngIf="loginForm.get('password')?.invalid">
+                {{ shared.getErrorMessage({group: loginForm, control: 'password'}) }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <br>
+          <button mat-raised-button type="submit"
+            class="default"
+            [disabled]="loginForm.invalid">
+            Enviar
+          </button>
+        </div>
+      </form>
+    </ng-container>
+
+    <span id="register">
+      <a routerLink="/register">
+        Criar login
+      </a>
+    </span>
+  </div>
+</section>
