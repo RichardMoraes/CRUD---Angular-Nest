@@ -8,6 +8,11 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { MedicalSpecialty } from '../components/medical-specialties/models/medical-specialties';
 import { MedicalSpecialtiesComponent } from '../components/medical-specialties/medical-specialties.component';
+import { UserService } from '../services/user/user.service';
+import { removeUser } from '../store/global.action';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { GlobalState } from '../models/global';
 
 interface FormError {
   group: FormGroup,
@@ -21,13 +26,18 @@ export class Shared {
   private loadingSubject = new BehaviorSubject<boolean>(false);
 
   constructor(
+    private store: Store<GlobalState>,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog
+    private userService: UserService,
+    private router: Router,
+    public dialog: MatDialog,
   ) {}
 
-  loading(loading: boolean): void {
+  loading(loading: boolean, message?: string, duration?: number): void {
     this.loadingSubject.next(loading);
     document.body.style.overflow = 'hidden';
+
+    if(message) this.openSnackBar(message, duration ?? undefined);
   }
 
   openSnackBar(message: string, duration?: number): void {
@@ -69,5 +79,18 @@ export class Shared {
 
   sanitizeDate(date: Date): string | null {
     return new DatePipe('en-US').transform(date, 'yyyy-MM-dd')
+  }
+
+  filterSpecialtyLabel(id: string, list: MedicalSpecialty[]): string {
+    return list.filter(spec => spec.id === parseFloat(id))?.[0]?.value || '';
+  }
+
+  logout(): void {
+    this.userService.logout().then((res) => {
+      this.store.dispatch(removeUser());
+      this.router.navigate(['/login']);
+    }).catch(error => {
+      console.log(error);
+    });
   }
 }

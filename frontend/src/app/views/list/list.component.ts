@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
-import { Observable, Subject, debounceTime, firstValueFrom } from 'rxjs';
+import { Observable, Subject, Subscription, debounceTime, firstValueFrom } from 'rxjs';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -11,8 +11,6 @@ import { Entity } from '../entity/models/entity';
 import { GlobalState } from 'src/app/models/global';
 import { EntityService } from '../entity/services/entity.service';
 import { MedicalSpecialty } from 'src/app/components/medical-specialties/models/medical-specialties';
-import { MatDialog } from '@angular/material/dialog';
-import { MedicalSpecialtiesComponent } from 'src/app/components/medical-specialties/medical-specialties.component';
 
 @Component({
   selector: 'app-list',
@@ -20,7 +18,8 @@ import { MedicalSpecialtiesComponent } from 'src/app/components/medical-specialt
   styleUrls: ['./list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ListComponent implements OnInit, AfterViewInit {
+export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
+  private searchSubscription: Subscription | undefined;
   entities!: Entity[];
   /**
    * Resize
@@ -48,6 +47,7 @@ export class ListComponent implements OnInit, AfterViewInit {
   displayedColumns!: string[];
   pageSize: number = 5;
   totalItems$!: Observable<number>;
+  medicalSpecialtiesList!: MedicalSpecialty[];
   /*************************************** */
 
   constructor(
@@ -83,14 +83,17 @@ export class ListComponent implements OnInit, AfterViewInit {
     /**
      * Subscribes to the search params
      */
-      this.route.queryParams.subscribe(async (params: Params) => {
+      this.searchSubscription = this.route.queryParams.subscribe(async (params: Params) => {
         this.searchInputModel = this.shared.unSlugify(params['search'] ?? '');
 
         this.initTable(this.shared.unSlugify(this.searchInputModel));
       });
   }
 
-  ngOnInit() {
+  async ngOnInit(): Promise<void> {
+    const response = await firstValueFrom(this.entityService.getMedicalSpecialties());
+    this.medicalSpecialtiesList = Object.values(response?.data ?? []) ?? [];
+    this.cd.markForCheck();
   }
 
   ngAfterViewInit(): void {
@@ -174,5 +177,9 @@ export class ListComponent implements OnInit, AfterViewInit {
   onEditClick(el: Entity) {
     console.log(el)
     this.router.navigate(['list', el.id, 'editar']);
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchSubscription) this.searchSubscription.unsubscribe();
   }
 }

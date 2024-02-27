@@ -4,13 +4,14 @@
   <section id="details-section">
     <div id="details-container">
       <ng-container *ngIf="entityForm">
-        <form [formGroup]="entityForm" (submit)="onSubmit()">
+        <form [formGroup]="entityForm">
           <header>
             <h1 class="title">
               {{ entityFormType == 'edit' ? 'Editar' : 'Criar' }} Entidade
             </h1>
             <ng-container *ngIf="entityFormType === 'edit'">
-              <button mat-raised-button class="default">
+              <button mat-raised-button class="default"
+              (click)="deleteEntity()">
                 Excluir
               </button>
             </ng-container>
@@ -93,7 +94,7 @@
                 <mat-select formControlName="medical_specialties" multiple required>
                   <mat-select-trigger>
                       <ng-container *ngIf="medicalSpecialtiesList && medicalSpecialties?.value?.length > 0">
-                        {{ filterSpecialtyLabel(medicalSpecialties.value[0], medicalSpecialtiesList) }}
+                        {{ shared.filterSpecialtyLabel(medicalSpecialties.value[0], medicalSpecialtiesList) }}
                       </ng-container>
                       <ng-container *ngIf="medicalSpecialties.value?.length > 1">
                         <span class="text-xs" >
@@ -120,17 +121,19 @@
             <br>
             <nav class="buttons-nav">
               <div class="w-full md:w-3/5 xl:w-2/5 max-xs:flex-col-reverse flex justify-around items-center gap-5">
-                <button mat-raised-button type="submit" class="default cancel"
+                <button mat-raised-button class="default cancel"
                 [routerLink]="['/']">
                   Cancelar
                 </button>
                 <button mat-raised-button type="submit" class="default"
-                [disabled]="entityForm.invalid">
+                (click)="onSubmit()"
+                [disabled]="entityForm.invalid || !entityForm.touched">
                   Enviar
                 </button>
               </div>
               <ng-container *ngIf="entityFormType === 'edit'">
-                <button mat-raised-button class="mobile-delete default">
+                <button mat-raised-button class="mobile-delete default"
+                (click)="deleteEntity()">
                   Excluir
                 </button>
               </ng-container>

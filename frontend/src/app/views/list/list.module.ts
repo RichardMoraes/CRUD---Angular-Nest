@@ -13,8 +13,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { Subject } from 'rxjs';
+import { Eye, LucideAngularModule, Pencil, CheckCircle, XCircle, ArrowUpRightFromSquare } from 'lucide-angular';
 
-@Injectable()
 class CustomPaginationIntl implements MatPaginatorIntl {
   changes = new Subject<void>();
   firstPageLabel = `Primeira página`;
@@ -43,10 +43,11 @@ class CustomPaginationIntl implements MatPaginatorIntl {
     FormsModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    LucideAngularModule.pick({ Pencil, Eye, CheckCircle, XCircle, ArrowUpRightFromSquare })
   ],
   providers: [
-    {provide: MatPaginatorIntl, useClass: CustomPaginationIntl}
+    {provide: MatPaginatorIntl, useClass: CustomPaginationIntl},
   ]
 })
 export class ListModule { }

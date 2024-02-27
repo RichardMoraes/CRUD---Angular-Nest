@@ -21,15 +21,13 @@ export class EntitiesService {
   ) {}
 
   async create(createEntityDto: CreateEntityDto) {
-    // CNPJ Validatio
+    // CNPJ Validation
     if (!this.validateCNPJ(createEntityDto.cnpj))
       throw new UnprocessableEntityException('Invalid CNPJ');
 
     // unique key CNPJ Validation
-    // let teste = await this.entityRepository.findOneBy({ cnpj: createEntityDto.cnpj });
-    // console.log(teste)
-    // if (teste)
-    //   throw new ConflictException('Entity CNPJ already registered');
+    if (await this.entityRepository.findOneBy({ cnpj: createEntityDto.cnpj }))
+      throw new ConflictException('Entity CNPJ already registered');
 
     // Medical Specialties Validation
     createEntityDto.medical_specialties.map(async (id: string) => {

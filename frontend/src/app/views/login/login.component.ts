@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, OnDestroy, OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Shared } from 'src/app/shared/shared';
 import { User, UserState } from 'src/app/models/user';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { loadUser } from 'src/app/store/global.action';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user/user.service';
@@ -16,8 +16,9 @@ import { GlobalState } from 'src/app/models/global';
   styleUrls: ['./login.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginComponent implements OnInit {
-  user$!: Observable<User>
+export class LoginComponent implements OnInit,OnDestroy {
+  private userSubscription: Subscription | undefined;
+  private user$!: Observable<User>
   /**
    * Login Form Control
    */
@@ -40,8 +41,8 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.select(state => state.global.user.access_token).subscribe((token: string) => {
-      if(token.length > 0) this.router.navigate(['/list']);
+    this.userSubscription = this.user$.subscribe((user: User) => {
+      if(user.access_token.length > 0) this.router.navigate(['/list']);
     })
   }
 
@@ -49,5 +50,9 @@ export class LoginComponent implements OnInit {
     const { email, password } = this.loginForm.value
 
     this.store.dispatch(loadUser({ email, password }));
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSubscription) this.userSubscription.unsubscribe();
   }
 }

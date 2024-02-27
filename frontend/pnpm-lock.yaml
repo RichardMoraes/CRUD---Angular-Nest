@@ -50,6 +50,9 @@ dependencies:
   hammerjs:
     specifier: ^2.0.8
     version: 2.0.8
+  lucide-angular:
+    specifier: ^0.341.0
+    version: 0.341.0(@angular/common@13.3.12)(@angular/core@13.3.12)
   ngx-mask:
     specifier: ^13.2.2
     version: 13.2.2(@angular/common@13.3.12)(@angular/core@13.3.12)(@angular/forms@13.3.12)
@@ -6076,6 +6079,17 @@ packages:
     resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
     engines: {node: '>=12'}
     dev: true
+
+  /lucide-angular@0.341.0(@angular/common@13.3.12)(@angular/core@13.3.12):
+    resolution: {integrity: sha512-g1QDofw1fU2Y9wX0bRaIiVCLdj3/K8/6QSrU3snC2hXm0Or22mHdGQS9RumQ9k6pMBu1ZVYp8XBC/czSjvQDPA==}
+    peerDependencies:
+      '@angular/common': 13.x - 17.x
+      '@angular/core': 13.x - 17.x
+    dependencies:
+      '@angular/common': 13.3.12(@angular/core@13.3.12)(rxjs@7.5.7)
+      '@angular/core': 13.3.12(rxjs@7.5.7)(zone.js@0.11.8)
+      tslib: 2.6.2
+    dev: false
 
   /magic-string@0.25.7:
     resolution: {integrity: sha512-4CrMT5DOHTDk4HYDlzmwu4FVCcIYI8gauveasrdCu2IKIFOJ3f0v/8MDGJCDL9oD2ppz/Av1b0Nj345H9M+XIA==}

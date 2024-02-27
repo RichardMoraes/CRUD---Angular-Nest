@@ -25,7 +25,7 @@ export class UsersService {
       const user = new User();
       await user.setUser(createUserDto);
 
-      return this.userRepository.save(user);
+      return await this.userRepository.save(user);
     } catch (error) {
       throw new NotFoundException('User not found');
     }

@@ -27,6 +27,7 @@
     "@ngrx/store": "13.2.0",
     "gsap": "^3.12.5",
     "hammerjs": "^2.0.8",
+    "lucide-angular": "^0.341.0",
     "ngx-mask": "^13.2.2",
     "rxjs": "~7.5.0",
     "slugify": "^1.6.6",

@@ -116,13 +116,24 @@ export class EntityService {
       switchMap(token => {
         // Update Method
         if(id)
-          return this.http.patch<EntityResponse>(`${this.api}${id ? '/'+id : ''}`, { ...entityObj }, {
+          return this.http.patch<EntityResponse>(`${this.api}/${id}`, { ...entityObj }, {
             headers: { 'Authorization': `Bearer ${token.access_token}`},
             withCredentials: true
           });
 
         // Create Method
-        return this.http.post<EntityResponse>(`${this.api}${id ? '/'+id : ''}`, { ...entityObj }, {
+        return this.http.post<EntityResponse>(this.api, { ...entityObj }, {
+          headers: { 'Authorization': `Bearer ${token.access_token}`},
+          withCredentials: true
+        });
+      })
+    )
+  }
+
+  deleteEntity(id: string | number): Observable<EntityResponse> {
+    return this.userState$.pipe(
+      switchMap(token => {
+        return this.http.delete<EntityResponse>(`${this.api}/${id}`, {
           headers: { 'Authorization': `Bearer ${token.access_token}`},
           withCredentials: true
         });

@@ -21,7 +21,9 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Filtrar por nome">
               Nome
             </th>
-            <td mat-cell *matCellDef="let element"> {{element.fantasy_name}} </td>
+            <td mat-cell *matCellDef="let element">
+              <p>{{element.fantasy_name}} </p>
+            </td>
           </ng-container>
           <!-- Region -->
           <ng-container matColumnDef="region">
@@ -35,26 +37,48 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Filtrar por especialidades">
               Especialidades
             </th>
-            <td mat-cell *matCellDef="let element" (click)="shared.openMedicalSpecialtiesDialog(element.medical_specialties)"> {{element.medical_specialties}} </td>
+            <td mat-cell *matCellDef="let element"
+              class="medical-specialties"
+              (click)="shared.openMedicalSpecialtiesDialog(element.medical_specialties)">
+              <ng-container *ngIf="medicalSpecialtiesList">
+                <div class="flex gap-2 justify-center items-center">
+                  <div>
+                    {{ shared.filterSpecialtyLabel(element.medical_specialties, medicalSpecialtiesList)}}
+                    <ng-container *ngIf="element.medical_specialties.length > 1">
+                      <span class="text-xs" >
+                        (+{{element.medical_specialties.length - 1}} {{element.medical_specialties.length === 2 ? 'Outro' : 'Outros'}})
+                      </span>
+                    </ng-container>
+                  </div>
+                  <lucide-icon name="arrow-up-right-from-square" class="icon w-3.5 self-end"></lucide-icon>
+                </div>
+              </ng-container>
+            </td>
           </ng-container>
           <!-- Active Column -->
           <ng-container matColumnDef="active">
             <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Filtrar por Status">
-              Status
+              Ativa
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.active ? 'Ativa' : 'Inativa' }}
+              <ng-container *ngIf="element.active; else entityInactive">
+                <lucide-icon name="check-circle" color="green"></lucide-icon>
+              </ng-container>
+              <ng-template #entityInactive>
+                <lucide-icon name="x-circle" color="red"></lucide-icon>
+              </ng-template>
             </td>
           </ng-container>
           <!-- Actions Column -->
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let element">
+            <td mat-cell *matCellDef="let element"
+            class="actions space-x-3">
               <button mat-icon-button (click)="onViewClick(element)">
-                <mat-icon>remove_red_eye</mat-icon>
+                <lucide-icon name="eye"></lucide-icon>
               </button>
               <button mat-icon-button (click)="onEditClick(element)">
-                <mat-icon>edit</mat-icon>
+                <lucide-icon name="pencil"></lucide-icon>
               </button>
             </td>
           </ng-container>
@@ -94,7 +118,7 @@
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-    [routerLink]="[row.name]">
+    [routerLink]="[row.id]">
     </tr>
   </table>
 </ng-template>

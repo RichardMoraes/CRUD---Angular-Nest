@@ -7,7 +7,7 @@ import { GlobalState } from 'src/app/models/global';
 import { Entity } from '../models/entity';
 import { Store } from '@ngrx/store';
 import { DatePipe } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom, throwError } from 'rxjs';
 import { MedicalSpecialty } from 'src/app/components/medical-specialties/models/medical-specialties';
 
 @Component({
@@ -35,7 +35,6 @@ export class FormComponent implements OnInit {
   medicalSpecialtiesList!: MedicalSpecialty[];
 
   constructor(
-    private store: Store<{ global: GlobalState }>,
     private entityService: EntityService,
     private route: ActivatedRoute,
     private router: Router,
@@ -47,14 +46,14 @@ export class FormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // try {
+    try {
       if(this.entityId)
         this.handleEntity(this.entityId);
 
       this.initEntityForm();
-    // } catch (error) {
-    //   this.router.navigate(['/list']);
-    // }
+    } catch (error) {
+      this.router.navigate(['/list']);
+    }
   }
 
   get entity(): Entity {
@@ -64,15 +63,20 @@ export class FormComponent implements OnInit {
   private set entity(entity: Entity) {
     this._entity = entity;
 
+    const openingDate = new Date(entity.opening_date);
+    openingDate.setDate(openingDate.getDate() + 1);
+
     this.entityForm.patchValue({
       company_name: entity.company_name,
       fantasy_name: entity.fantasy_name,
       cnpj: entity.cnpj,
       region: entity.region,
-      opening_date: new Date(entity.opening_date),
+      opening_date: openingDate,
       active: entity.active,
       medical_specialties: entity.medical_specialties
     });
+
+    console.log(openingDate)
   }
 
   private async handleEntity(id: string): Promise<void>{
@@ -149,44 +153,69 @@ export class FormComponent implements OnInit {
     return 'invalid';
   }
 
+  private disableForm(disable: boolean) {
+    Object.keys(this.entityForm.controls).forEach(key => {
+      if (disable) {
+        this.entityForm.get(key)?.disable();
+      } else {
+        this.entityForm.get(key)?.enable();
+      }
+    });
+  }
+
   async onSubmit(): Promise<void> {
     if (this.entityForm.invalid)
       return;
 
-      try {
-        const sanitizeDate = this.shared.sanitizeDate(this.entityForm.value.opening_date)
+      this.shared.loading(true, 'Salvando...', 10000);
+      this.disableForm(true);
 
-        if(!sanitizeDate) throw new Error;
+      const sanitizeDate = this.shared.sanitizeDate(this.entityForm.value.opening_date)
 
-        this.entity = this.entityForm.value;
-        this.entity.opening_date = sanitizeDate;
-        this.shared.loading(true);
+      if(!sanitizeDate) throw new Error;
 
-        const savedEntity = (await firstValueFrom(this.entityService.setEntity(this.entity, this.entityId))).data
+      this.entity = this.entityForm.value;
+      this.entity.opening_date = sanitizeDate;
 
-        if(!savedEntity) return;
+      await firstValueFrom(this.entityService.setEntity(this.entity, this.entityFormType === 'edit' ? this.entityId : undefined)).then(async (res) => {
+        const savedEntity = res.data
 
-        this.entityForm.reset();
-        this.entity = savedEntity;
-        await this.initSelects();
+        if(!savedEntity) return throwError(() => 'Error to Save Entity');
 
-        this.shared.openSnackBar('Entity Saved Successfully!')
-        this.cd.markForCheck();
-        this.shared.loading(false);
-      } catch (error) {
-        console.log(error);
-      }
+        if(this.entityFormType === 'edit'){
+          await this.initSelects();
+        } else {
+          this.router.navigate(['list', savedEntity.id, 'editar'])
+        }
+
+        this.shared.loading(false, 'Entidade salva com sucesso!');
+        return;
+      }).catch(error => {
+        if(error.status !== 401)
+          this.shared.loading(false, error.error.message, 5000);
+      }).finally(() => {
+        this.disableForm(false);
+      });
 
 
-    // this.store.dispatch(addEntity({
-    //   entity: {
-    //     ...this.entityForm.value,
-    //     opening_date: (new DatePipe('en-US')).transform(this.entityForm.value.opening_date, 'yyyy-MM-dd')
-    //   }
-    // }));
   }
 
-  filterSpecialtyLabel(id: number, list: MedicalSpecialty[]): string {
-    return list.filter(spec => spec.id === id)?.[0]?.value || '';
+  async deleteEntity(): Promise<void> {
+    if(!this.entity){
+      this.shared.loading(false, 'A entidade não existe e não pode ser deletada', 10000);
+      return;
+    }
+
+    this.disableForm(true);
+    await firstValueFrom(this.entityService.deleteEntity(this.entity.id)).then(async (res) => {
+      this.router.navigate(['list']);
+      this.shared.loading(false, 'Entidade excluída com sucesso!');
+      return;
+    }).catch(error => {
+      if(error.status !== 401)
+        this.shared.loading(false, error.error.message, 5000);
+    }).finally(() => {
+      this.disableForm(false);
+    });
   }
 }

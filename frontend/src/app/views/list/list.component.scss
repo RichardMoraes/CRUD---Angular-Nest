@@ -131,9 +131,37 @@
         }
 
         .mat-header-cell, .mat-cell {
+          text-align: center;
+          text-align: -webkit-center;
+
           @apply
-          text-xl
-            text-center;
+            text-xl
+            overflow-ellipsis
+            text-nowrap;
+        }
+
+        .mat-cell {
+          &.medical-specialties {
+            @apply
+              text-lg
+              cursor-pointer;
+
+              &:hover {
+                .icon{
+                  @apply
+                  transition-all
+                  scale-110;
+                }
+              }
+          }
+
+          &.actions {
+            button {
+              @apply
+              transition-transform
+              hover:scale-125;
+          }
+        }
         }
       }
 

@@ -69,7 +69,6 @@ export class AuthController {
     }
   }
 
-  @UseGuards(JwtGuard)
   @Get('logout')
   async logout(
     @Res({ passthrough: true }) response: express.Response,

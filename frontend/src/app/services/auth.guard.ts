@@ -19,12 +19,33 @@ export class AuthGuard implements CanActivate {
   ){}
 
     async canActivate(route: ActivatedRouteSnapshot): Promise<boolean | UrlTree> {
-      return this.userService.isAuthenticated().then(isAuthenticated => {
-        if (isAuthenticated) {
-          return true;
+      try {
+        const userState = await firstValueFrom(this.store.select(state => state.global.user).pipe(first()));
+        const { access_token } = userState;
+
+        if (access_token) {
+          const userCheck = await firstValueFrom(this.userService.checkUser());
+
+          if(userCheck?.status == 'success') return true;
+
+          throw new Error('invalid access token');
         } else {
-          return this.router.createUrlTree(['/login']);
+          throw new Error('invalid access token');
         }
-      });
+      } catch (error) {
+        return await this.refreshToken().catch(error => {
+          return this.router.createUrlTree(['/login']);
+        });
+      }
+    }
+
+
+    async refreshToken() {
+      const access_token = (await firstValueFrom(this.userService.refreshUserToken())).data?.access_token!;
+
+      if(!access_token) throw new Error('Invalid access token');
+
+      this.store.dispatch(updateUserToken({ access_token }));
+      return true;
     }
 }

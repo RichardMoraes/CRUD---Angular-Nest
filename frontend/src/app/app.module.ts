@@ -12,13 +12,12 @@ import { EffectsModule } from '@ngrx/effects';
 import { GlobalEffects } from './store/global.effect';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { globalReducer } from './store/global.reducer';
-import { LoadingInterceptor } from './shared/loading-interceptor';
 import { MedicalSpecialtiesComponent } from './components/medical-specialties/medical-specialties.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SnackBarComponent } from './components/snack-bar/snack-bar.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
-
+import { httpInterceptorProviders } from './shared/loading-interceptor';
 
 @NgModule({
   declarations: [
@@ -41,11 +40,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   ],
   providers: [
     AuthGuard,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: LoadingInterceptor,
-      multi: true,
-    },
+    httpInterceptorProviders
   ],
   bootstrap: [AppComponent]
 })

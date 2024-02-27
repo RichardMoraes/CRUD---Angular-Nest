@@ -28,7 +28,11 @@
               <!-- CNPJ Form Field -->
               <mat-form-field appearance="fill">
                 <mat-label>CNPJ</mat-label>
-                <input matInput formControlName="cnpj" readonly>
+                <input matInput formControlName="cnpj"
+                placeholder="00.111.628/0001-54"
+                mask="00.000.000/0000-00"
+                readonly
+              >
               </mat-form-field>
               <!-- Opening Date Form Field -->
               <mat-form-field class="date-picker" appearance="fill">
@@ -41,11 +45,27 @@
                 <input matInput formControlName="region" readonly>
               </mat-form-field>
               <!-- Medical Specialties Form Field -->
-              <div (click)="shared.openMedicalSpecialtiesDialog(entity.medical_specialties)">
+              <div class="cursor-pointer" (click)="shared.openMedicalSpecialtiesDialog(entity.medical_specialties)">
                 <mat-form-field class="w-full" appearance="fill">
                   <mat-label>
                     Especialidades Médicas</mat-label>
-                  <input matInput formControlName="medical_specialties" readonly>
+                    <mat-select formControlName="medical_specialties" multiple readonly>
+                      <mat-select-trigger>
+                          <ng-container *ngIf="medicalSpecialtiesList && medicalSpecialties?.value?.length > 0">
+                            {{ shared.filterSpecialtyLabel(medicalSpecialties.value[0], medicalSpecialtiesList) }}
+                          </ng-container>
+                          <ng-container *ngIf="medicalSpecialties.value?.length > 1">
+                            <span class="text-xs" >
+                              (+{{medicalSpecialties.value.length - 1}} {{medicalSpecialties.value.length === 2 ? 'Outro' : 'Outros'}})
+                            </span>
+                          </ng-container>
+                      </mat-select-trigger>
+                      <ng-container *ngFor="let specialty of medicalSpecialtiesList">
+                        <mat-option [value]="specialty.id">
+                          {{ specialty.value }}
+                        </mat-option>
+                      </ng-container>
+                    </mat-select>
                 </mat-form-field>
               </div>
               <!-- Active Form Field -->
@@ -56,11 +76,11 @@
             </div>
             <br>
             <nav class="buttons-nav">
-              <button mat-raised-button type="submit" class="default mobile"
+              <button mat-raised-button class="default mobile"
               [routerLink]="['editar']">
                 Editar
               </button>
-              <button mat-raised-button type="submit" class="default cancel"
+              <button mat-raised-button class="default cancel"
               [routerLink]="['/list']">
                 Voltar
               </button>
