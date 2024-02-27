@@ -1,8 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MedicalSpecialty } from './models/medical-specialties';
 import {
-  MatDialogTitle,
-  MatDialogContent,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { EntityService } from 'src/app/views/entity/services/entity.service';

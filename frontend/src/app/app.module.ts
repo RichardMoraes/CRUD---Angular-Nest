@@ -1,4 +1,4 @@
-import { NgModule, TemplateRef } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -10,7 +10,7 @@ import { AuthGuard } from './services/auth.guard';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { GlobalEffects } from './store/global.effect';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { globalReducer } from './store/global.reducer';
 import { MedicalSpecialtiesComponent } from './components/medical-specialties/medical-specialties.component';
 import { MatDialogModule } from '@angular/material/dialog';

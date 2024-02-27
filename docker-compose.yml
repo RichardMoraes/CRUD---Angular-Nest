@@ -1,5 +1,12 @@
 version: '3.8'
 services:
+  angular:
+    build: 
+      context: ./frontend
+    ports:
+      - '4200:4200'
+    depends_on:
+      - nest
   nest:
     build: ./backend
     ports:
@@ -8,6 +15,13 @@ services:
       MYSQL_USER: backend
       MYSQL_PASSWORD: q1Q!q1Q!
       MYSQL_DATABASE: crud
+    depends_on:
+      - mysql
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
     depends_on:
       - mysql
   mysql:
@@ -22,10 +36,3 @@ services:
       MYSQL_DATABASE: crud
     volumes:
       - ./medical_specialty.sql:/docker-entrypoint-initdb.d/medical_specialty.sql
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-    depends_on:
-      - mysql
