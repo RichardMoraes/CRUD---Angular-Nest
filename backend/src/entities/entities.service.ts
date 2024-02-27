@@ -26,11 +26,13 @@ export class EntitiesService {
       throw new UnprocessableEntityException('Invalid CNPJ');
 
     // unique key CNPJ Validation
-    if (await this.entityRepository.findOneBy({ cnpj: createEntityDto.cnpj }))
-      throw new ConflictException('Entity CNPJ already registered');
+    // let teste = await this.entityRepository.findOneBy({ cnpj: createEntityDto.cnpj });
+    // console.log(teste)
+    // if (teste)
+    //   throw new ConflictException('Entity CNPJ already registered');
 
     // Medical Specialties Validation
-    createEntityDto.medical_specialties.forEach(async (id: string) => {
+    createEntityDto.medical_specialties.map(async (id: string) => {
       const specialty = await this.medicalSpecialtyRepository.findOneBy({
         id: parseInt(id),
       });
@@ -60,6 +62,27 @@ export class EntitiesService {
     }
   }
 
+  async findBySearch(searchTerm: string) {
+    try {
+      const entities = await this.entityRepository
+        .createQueryBuilder('entity')
+        .where('entity.company_name LIKE :search', {
+          search: `%${searchTerm}%`,
+        })
+        .orWhere('entity.fantasy_name LIKE :search', {
+          search: `%${searchTerm}%`,
+        })
+        .orWhere('entity.cnpj LIKE :search', { search: `%${searchTerm}%` })
+        .getMany();
+
+      if (!entities) throw new NotFoundException('No entities not found');
+
+      return entities;
+    } catch (error) {
+      throw new NotFoundException('No entities not found');
+    }
+  }
+
   async findOne(id: number) {
     try {
       const entity = await this.entityRepository.findOneBy({ id });
@@ -80,6 +103,7 @@ export class EntitiesService {
 
       return await this.entityRepository.findOneBy({ id });
     } catch (error) {
+      console.log(error);
       throw new UnprocessableEntityException('Error updating Entity');
     }
   }
@@ -89,6 +113,37 @@ export class EntitiesService {
       return await this.entityRepository.delete(id);
     } catch (error) {
       throw new UnprocessableEntityException('Error deleting Entity');
+    }
+  }
+
+  async findAllMedicalSpecialties() {
+    try {
+      const specialties = await this.medicalSpecialtyRepository.find();
+
+      if (!specialties) throw new NotFoundException('Specialties not found');
+
+      return specialties;
+    } catch (error) {
+      throw new UnprocessableEntityException('Error getting specialties');
+    }
+  }
+
+  async findMedicalSpecialties(specialtiesData: string[]) {
+    try {
+      const specialties = specialtiesData.map(async (id: string) => {
+        const specialty = await this.medicalSpecialtyRepository.findOneBy({
+          id: parseInt(id),
+        });
+
+        if (!specialty)
+          throw new Error(`Medical specialty with ID ${id} not found`);
+
+        return specialty.value;
+      });
+
+      return await Promise.all(specialties);
+    } catch (error) {
+      throw new UnprocessableEntityException('Error getting specialties');
     }
   }
 

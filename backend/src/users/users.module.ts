@@ -14,7 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
       // TODO: Set to dotenv
       secret: 'rKWr9Wp3dcU2hX8w@*9a4$Mz2uTYMhB',
       // TODO: Set to dotenv
-      signOptions: { expiresIn: '5m' },
+      signOptions: { expiresIn: '1h' },
     }),
   ],
   providers: [UsersService, AuthService],

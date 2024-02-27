@@ -14,7 +14,11 @@ import { User } from 'src/users/entities/user.entity';
 import { JwtRefreshGuard } from './guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtGuard } from './guards/jwt-auth.guard';
-import { AuthResponseDto } from './dto/auth.dto';
+
+interface AuthResponse {
+  status: string;
+  data?: Partial<User> | Partial<User[]> | { access_token: string };
+}
 
 @Controller('auth')
 export class AuthController {
@@ -25,7 +29,7 @@ export class AuthController {
 
   @UseGuards(JwtGuard)
   @Get('check')
-  async checkToken(): Promise<AuthResponseDto> {
+  async checkToken(): Promise<AuthResponse> {
     return {
       status: 'success',
     };
@@ -36,7 +40,7 @@ export class AuthController {
   async login(
     @Req() req: any,
     @Res({ passthrough: true }) response: express.Response,
-  ): Promise<AuthResponseDto> {
+  ): Promise<AuthResponse> {
     delete req.user.password;
 
     try {
@@ -69,7 +73,7 @@ export class AuthController {
   @Get('logout')
   async logout(
     @Res({ passthrough: true }) response: express.Response,
-  ): Promise<AuthResponseDto> {
+  ): Promise<AuthResponse> {
     try {
       response.cookie('refresh_token', '', {
         expires: new Date(0),
@@ -87,7 +91,7 @@ export class AuthController {
   async refreshToken(
     @Req() req: any,
     @Res({ passthrough: true }) response: express.Response,
-  ): Promise<Partial<AuthResponseDto>> {
+  ): Promise<Partial<AuthResponse>> {
     try {
       response.cookie(
         'refresh_token',
