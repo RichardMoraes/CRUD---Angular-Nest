@@ -8,6 +8,7 @@ import { EventData } from './event-bus/event.class';
 import { GlobalState } from '../models/global';
 import { Store } from '@ngrx/store';
 import { updateUserToken } from '../store/global.action';
+import { Shared } from './shared';
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
@@ -17,15 +18,14 @@ export class HttpRequestInterceptor implements HttpInterceptor {
   constructor(
     private store: Store<{ global: GlobalState }>,
     private userService: UserService,
-    private eventBusService: EventBusService
+    private eventBusService: EventBusService,
+    private shared: Shared
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     req = req.clone({
       withCredentials: true,
     });
-
-    console.log('intercepted');
 
     return next.handle(req).pipe(
       catchError((error) => {
@@ -57,9 +57,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
         }),
         catchError((error) => {
           this.isRefreshing = false;
-          if (error.status === 401) {
-            this.eventBusService.emit(new EventData('logout', null));
-          }
+          this.shared.logout();
           return throwError(() => error);
         }),
         finalize(() => {
@@ -67,14 +65,8 @@ export class HttpRequestInterceptor implements HttpInterceptor {
         })
       );
     } else {
-      // Aguarda até que o token seja atualizado antes de continuar com a requisição
-      return this.refreshTokenSubject.pipe(
-        filter(result => result !== null),
-        take(1),
-        switchMap(() => {
-          return next.handle(request);
-        })
-      );
+      this.eventBusService.emit(new EventData('logout', null));
+      return next.handle(request);
     }
   }
 }
