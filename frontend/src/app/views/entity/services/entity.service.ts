@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Entity } from '../models/entity';
-import { SelectObject } from 'src/app/models/global';
+import { EntitiesResponse, Entity, EntityResponse, SpecialtiesResponse } from '../models/entity';
+import { GlobalState } from 'src/app/models/global';
+import { Observable, switchMap } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Store } from '@ngrx/store';
+import { MedicalSpecialty } from 'src/app/components/medical-specialties/models/medical-specialties';
 
 const regionsList = [
   { value: '1', label: 'Alto tietê' },
@@ -44,27 +49,39 @@ const medicalSpecialtiesList = [
   providedIn: 'root'
 })
 export class EntityService {
+  private api = `${environment.apiUrl}/entities`;
+  private userState$ = this.store.select(state => state.global.user)
 
-  constructor() { }
+  constructor(
+    private store: Store<{ global: GlobalState }>,
+    private http: HttpClient
+  ) { }
 
-  getEntity(id: string | number): Promise<Entity> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve({
-          id: '1',
-          company_name: 'teste company name',
-          fantasy_name: 'test fantasy name',
-          cnpj: '29.437.213/0001-67',
-          region: '5',
-          opening_date: '2001-05-26',
-          active: true,
-          medical_specialties: ['1', '13', '16', '5', '8', '3']
+  getEntity(id: string | number): Observable<EntityResponse> {
+    return this.userState$.pipe(
+      switchMap(token => {
+        return this.http.get<EntityResponse>(`${this.api}/${id}`, {
+          headers: { 'Authorization': `Bearer ${token.access_token}`},
+          withCredentials: true
         });
-      }, 1000);
-    });
+      })
+    )
   }
 
-  getRegions(): Promise<SelectObject[]> {
+  getEntityList(search?: string): Observable<EntitiesResponse> {
+    const searchParam = search ? `?search=${search}` : '';
+
+    return this.userState$.pipe(
+      switchMap(token => {
+        return this.http.get<EntitiesResponse>(`${this.api}${searchParam}`, {
+          headers: { 'Authorization': `Bearer ${token.access_token}`},
+          withCredentials: true
+        });
+      })
+    )
+  }
+
+  getRegions(): Promise<{value?: string; label?: string}[]> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(regionsList);
@@ -72,11 +89,44 @@ export class EntityService {
     });
   }
 
-  getMedicalSpecialties(): Promise<SelectObject[]> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(medicalSpecialtiesList);
-      }, 1000);
-    });
+  getMedicalSpecialties(): Observable<SpecialtiesResponse> {
+    return this.userState$.pipe(
+      switchMap(token => {
+        return this.http.get<SpecialtiesResponse>(`${this.api}/specialties`, {
+          headers: { 'Authorization': `Bearer ${token.access_token}`},
+          withCredentials: true
+        });
+      })
+    )
+  }
+
+  filterMedicalSpecialties(specialties: string[]): Observable<SpecialtiesResponse> {
+    return this.userState$.pipe(
+      switchMap(token => {
+        return this.http.post<SpecialtiesResponse>(`${this.api}/specialties`, {specialties}, {
+          headers: { 'Authorization': `Bearer ${token.access_token}`},
+          withCredentials: true
+        });
+      })
+    )
+  }
+
+  setEntity(entityObj: Entity, id?: string | number): Observable<EntityResponse> {
+    return this.userState$.pipe(
+      switchMap(token => {
+        // Update Method
+        if(id)
+          return this.http.patch<EntityResponse>(`${this.api}${id ? '/'+id : ''}`, { ...entityObj }, {
+            headers: { 'Authorization': `Bearer ${token.access_token}`},
+            withCredentials: true
+          });
+
+        // Create Method
+        return this.http.post<EntityResponse>(`${this.api}${id ? '/'+id : ''}`, { ...entityObj }, {
+          headers: { 'Authorization': `Bearer ${token.access_token}`},
+          withCredentials: true
+        });
+      })
+    )
   }
 }

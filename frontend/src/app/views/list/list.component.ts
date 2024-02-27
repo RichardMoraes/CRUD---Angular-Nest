@@ -1,15 +1,18 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
-import { Observable, Subject, debounceTime } from 'rxjs';
+import { Observable, Subject, debounceTime, firstValueFrom } from 'rxjs';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Shared } from 'src/app/shared/shared';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { Store } from '@ngrx/store';
 import { Entity } from '../entity/models/entity';
-import { loadEntities } from 'src/app/store/global.action';
 import { GlobalState } from 'src/app/models/global';
+import { EntityService } from '../entity/services/entity.service';
+import { MedicalSpecialty } from 'src/app/components/medical-specialties/models/medical-specialties';
+import { MatDialog } from '@angular/material/dialog';
+import { MedicalSpecialtiesComponent } from 'src/app/components/medical-specialties/medical-specialties.component';
 
 @Component({
   selector: 'app-list',
@@ -18,7 +21,7 @@ import { GlobalState } from 'src/app/models/global';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListComponent implements OnInit, AfterViewInit {
-  entities$!: Observable<Entity[]>
+  entities!: Entity[];
   /**
    * Resize
    */
@@ -43,21 +46,19 @@ export class ListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   dataSource: MatTableDataSource<Entity> = new MatTableDataSource();
   displayedColumns!: string[];
-  pageSize: number = 10;
+  pageSize: number = 5;
   totalItems$!: Observable<number>;
   /*************************************** */
 
   constructor(
+    private store: Store<{ global: GlobalState }>,
     private _liveAnnouncer: LiveAnnouncer,
     private route: ActivatedRoute,
     private router: Router,
-    private shared: Shared,
     private cd: ChangeDetectorRef,
-    private store: Store<{ global: GlobalState }>
-    ) {
-      this.entities$ = this.store.select(state => state.global.entities);
-      this.totalItems$ = this.store.select(state => state.global.entities.length);
-
+    private entityService: EntityService,
+    public shared: Shared
+  ) {
     /**
      * Seach Input
      */
@@ -82,30 +83,14 @@ export class ListComponent implements OnInit, AfterViewInit {
     /**
      * Subscribes to the search params
      */
-      this.route.queryParams.subscribe((params: Params) => {
+      this.route.queryParams.subscribe(async (params: Params) => {
         this.searchInputModel = this.shared.unSlugify(params['search'] ?? '');
 
-        this.store.dispatch(loadEntities({
-          search: this.shared.unSlugify(this.searchInputModel)
-        }));
-
-        // this.listService.getList({
-        //   search: this.shared.unSlugify(this.searchInputModel)
-        // }).then((list: Entity[]) => {
-        //   this.initTable(list);
-        //   this.tableData = list;
-        //   this.cd.markForCheck();
-        // })
+        this.initTable(this.shared.unSlugify(this.searchInputModel));
       });
   }
 
   ngOnInit() {
-    this.initTable()
-
-    this.store.select(state => state.global.entities).subscribe((data: Entity[]) => {
-      this.tableData = data;
-      this.cd.markForCheck();
-    })
   }
 
   ngAfterViewInit(): void {
@@ -124,8 +109,10 @@ export class ListComponent implements OnInit, AfterViewInit {
     this.dataSource.data = data;
   }
 
-  private initTable(): void {
-    this.tableData = [];
+  private async initTable(search?: string): Promise<void> {
+    this.entities = Object.values(await this.handleEntities(search));
+
+    this.tableData = this.entities;
     this.dataSource.sort = this.sort;
 
     this.setColumns();
@@ -157,11 +144,8 @@ export class ListComponent implements OnInit, AfterViewInit {
     this.paginator?._changePageSize(this.pageSize);
   }
 
-  handlePageEvent(event: PageEvent) {
-    let { pageIndex, pageSize } = event;
-
-    if(event.previousPageIndex !== event.pageIndex)
-      this.store.dispatch(loadEntities({ pageIndex, pageSize }));
+  private async handleEntities(search?: string): Promise<Entity[]>{
+    return (await firstValueFrom(this.entityService.getEntityList(search))).data!;
   }
 
   onSearchChange(event: Event): void {
@@ -183,10 +167,12 @@ export class ListComponent implements OnInit, AfterViewInit {
   }
 
   onViewClick(el: Entity) {
-    this.router.navigate(['list', this.shared.slugify(el.id)]);
+    console.log(el)
+    this.router.navigate(['list', el.id]);
   }
 
   onEditClick(el: Entity) {
-    this.router.navigate(['list', this.shared.slugify(el.id), 'editar']);
+    console.log(el)
+    this.router.navigate(['list', el.id, 'editar']);
   }
 }

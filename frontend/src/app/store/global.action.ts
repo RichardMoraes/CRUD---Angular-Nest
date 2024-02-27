@@ -38,30 +38,3 @@ import { User } from "../models/user";
     }>()
   );
 /**************************** */
-
-/**
- * Entities Actions
- */
-  export const loadEntities = createAction(
-    'Load Entities',
-    props<{
-      search?: string,
-      pageIndex?: number | string,
-      pageSize?: number | string,
-    }>()
-  );
-
-  export const loadEntitiesSuccess = createAction(
-    'Load Entities Success',
-    props<{
-      entities: Entity[]
-    }>()
-  );
-
-  export const loadEntitiesFailure = createAction(
-    'Load Entities Failure',
-    props<{
-      error: any
-    }>()
-  );
-/**************************** */

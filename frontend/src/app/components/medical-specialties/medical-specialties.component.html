@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Especialidades Médicas:</h2>
+<mat-dialog-content>
+  <ul>
+    <ng-container *ngFor="let specialty of specialties">
+      <li>
+        <span>{{ specialty }}</span>
+      </li>
+    </ng-container>
+  </ul>
+</mat-dialog-content>

@@ -13,7 +13,6 @@
       </div>
     </header>
     <div class="list-container" *ngIf="dataSource">
-      <!-- TODO: Change this sample table -->
       <ng-container *ngIf="clientWidth >= 960; else mobileTable" #table>
         <table mat-table [dataSource]="dataSource" matSort
         (matSortChange)="announceSortChange($event)">
@@ -36,7 +35,7 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Filtrar por especialidades">
               Especialidades
             </th>
-            <td mat-cell *matCellDef="let element"> {{element.medical_specialties}} </td>
+            <td mat-cell *matCellDef="let element" (click)="shared.openMedicalSpecialtiesDialog(element.medical_specialties)"> {{element.medical_specialties}} </td>
           </ng-container>
           <!-- Active Column -->
           <ng-container matColumnDef="active">
@@ -65,7 +64,6 @@
       </ng-container>
       <ng-container>
         <mat-paginator #paginator
-          (page)="handlePageEvent($event)"
           showFirstLastButtons="true"
           [pageSize]="pageSize"
           [length]="(totalItems$ | async)"

@@ -4,7 +4,7 @@
   <section id="details-section">
     <div id="details-container">
       <ng-container *ngIf="entityForm">
-        <form [formGroup]="entityForm">
+        <form [formGroup]="entityForm" (submit)="onSubmit()">
           <header>
             <h1 class="title">
               {{ entityFormType == 'edit' ? 'Editar' : 'Criar' }} Entidade
@@ -102,8 +102,8 @@
                       </ng-container>
                   </mat-select-trigger>
                   <ng-container *ngFor="let specialty of medicalSpecialtiesList">
-                    <mat-option [value]="specialty.value">
-                      {{ specialty.label }}
+                    <mat-option [value]="specialty.id">
+                      {{ specialty.value }}
                     </mat-option>
                   </ng-container>
                 </mat-select>

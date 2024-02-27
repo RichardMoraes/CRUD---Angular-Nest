@@ -7,13 +7,11 @@ const routes: Routes = [
     loadChildren: () => import('./views/login/login.module').then(m => m.LoginModule),
     data: { title: 'Login', asideMenu: false }
   },
-  { path: 'list', canActivate: [AuthGuard],
-    loadChildren: () => import('./views/list/list.module').then(m => m.ListModule),
-    data: { title: 'Listagem' }
+  { path: 'list',
+    loadChildren: () => import('./views/list/list.module').then(m => m.ListModule)
   },
   { path: 'criar', canActivate: [AuthGuard],
-    loadChildren: () => import('./views/entity/form/form.module').then(m => m.FormModule),
-    data: { title: 'Criar Entidade' }
+    loadChildren: () => import('./views/entity/form/form.module').then(m => m.FormModule)
   },
   { path: '**', redirectTo: 'list' },
 ];

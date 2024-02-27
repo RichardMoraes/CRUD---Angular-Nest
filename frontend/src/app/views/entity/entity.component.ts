@@ -3,6 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Entity } from './models/entity';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityService } from './services/entity.service';
+import { firstValueFrom } from 'rxjs';
+import { Shared } from 'src/app/shared/shared';
 
 @Component({
   selector: 'app-entity',
@@ -19,6 +21,7 @@ export class EntityComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private cd: ChangeDetectorRef,
+    public shared: Shared
   ) { }
 
   ngOnInit(): void {
@@ -69,6 +72,6 @@ export class EntityComponent implements OnInit {
   }
 
   private async handleEntity(id: string): Promise<void>{
-    this.entity = await this.entityService.getEntity(id);
+    this.entity = (await firstValueFrom(this.entityService.getEntity(id))).data!;
   }
 }

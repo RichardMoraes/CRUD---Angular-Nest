@@ -41,10 +41,13 @@
                 <input matInput formControlName="region" readonly>
               </mat-form-field>
               <!-- Medical Specialties Form Field -->
-              <mat-form-field appearance="fill">
-                <mat-label>Especialidades Médicas</mat-label>
-                <input matInput formControlName="medical_specialties" readonly>
-              </mat-form-field>
+              <div (click)="shared.openMedicalSpecialtiesDialog(entity.medical_specialties)">
+                <mat-form-field class="w-full" appearance="fill">
+                  <mat-label>
+                    Especialidades Médicas</mat-label>
+                  <input matInput formControlName="medical_specialties" readonly>
+                </mat-form-field>
+              </div>
               <!-- Active Form Field -->
               <mat-form-field appearance="fill">
                 <mat-label>Ativo</mat-label>

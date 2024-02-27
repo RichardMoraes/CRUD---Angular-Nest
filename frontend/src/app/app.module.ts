@@ -11,12 +11,20 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { GlobalEffects } from './store/global.effect';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { globalReducer, userReducer } from './store/global.reducer';
+import { globalReducer } from './store/global.reducer';
 import { LoadingInterceptor } from './shared/loading-interceptor';
+import { MedicalSpecialtiesComponent } from './components/medical-specialties/medical-specialties.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { SnackBarComponent } from './components/snack-bar/snack-bar.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MedicalSpecialtiesComponent,
+    SnackBarComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +34,10 @@ import { LoadingInterceptor } from './shared/loading-interceptor';
     BackgroundRoutingModule,
     HttpClientModule,
     EffectsModule.forRoot([GlobalEffects]),
-    StoreModule.forRoot({ global: globalReducer, user: userReducer })
+    StoreModule.forRoot({ global: globalReducer }),
+    MatDialogModule,
+    MatSnackBarModule,
+    MatFormFieldModule
   ],
   providers: [
     AuthGuard,

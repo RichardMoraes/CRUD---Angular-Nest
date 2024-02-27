@@ -12,7 +12,6 @@ export interface User {
   access_token: string;
 }
 
-
 export interface UserResponse {
   status: string;
   data?: User;

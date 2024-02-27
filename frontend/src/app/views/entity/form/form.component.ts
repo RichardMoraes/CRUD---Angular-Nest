@@ -3,8 +3,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Shared } from 'src/app/shared/shared';
 import { EntityService } from '../services/entity.service';
-import { SelectObject } from 'src/app/models/global';
+import { GlobalState } from 'src/app/models/global';
 import { Entity } from '../models/entity';
+import { Store } from '@ngrx/store';
+import { DatePipe } from '@angular/common';
+import { firstValueFrom } from 'rxjs';
+import { MedicalSpecialty } from 'src/app/components/medical-specialties/models/medical-specialties';
 
 @Component({
   selector: 'app-form',
@@ -15,26 +19,42 @@ import { Entity } from '../models/entity';
 export class FormComponent implements OnInit {
   private _entity!: Entity;
 
-  entityForm!: FormGroup;
+  entityForm: FormGroup = new FormGroup({
+    company_name: new FormControl('', [Validators.required]),
+    fantasy_name: new FormControl('', [Validators.required]),
+    cnpj: new FormControl('', [Validators.required]),
+    region: new FormControl('', [Validators.required]),
+    opening_date: new FormControl('', [Validators.required]),
+    active: new FormControl(false),
+    medical_specialties: new FormControl([], [Validators.required, Validators.minLength(5)])
+  });
   entityFormType!: string;
+  entityId!: string;
 
-  regionsList!: SelectObject[];
-  medicalSpecialtiesList!: SelectObject[];
+  regionsList!: {value?: string; label?: string}[];
+  medicalSpecialtiesList!: MedicalSpecialty[];
 
   constructor(
+    private store: Store<{ global: GlobalState }>,
     private entityService: EntityService,
     private route: ActivatedRoute,
     private router: Router,
     private cd: ChangeDetectorRef,
     public shared: Shared
-  ) { }
+  ) {
+    this.entityFormType = this.handleFormType();
+    this.entityId = this.route.snapshot.paramMap.get('entity') ?? '';
+  }
 
   ngOnInit(): void {
-    try {
-      this.initEntityForm(this.route.snapshot.paramMap.get('entity') ?? '');
-    } catch (error) {
-      this.router.navigate(['/list']);
-    }
+    // try {
+      if(this.entityId)
+        this.handleEntity(this.entityId);
+
+      this.initEntityForm();
+    // } catch (error) {
+    //   this.router.navigate(['/list']);
+    // }
   }
 
   get entity(): Entity {
@@ -44,15 +64,19 @@ export class FormComponent implements OnInit {
   private set entity(entity: Entity) {
     this._entity = entity;
 
-    this.entityForm = new FormGroup({
-      company_name: new FormControl(entity.company_name, [Validators.required]),
-      fantasy_name: new FormControl(entity.fantasy_name, [Validators.required]),
-      cnpj: new FormControl(entity.cnpj, [Validators.required]),
-      region: new FormControl(entity.region, [Validators.required]),
-      opening_date: new FormControl(new Date(entity.opening_date), [Validators.required]),
-      active: new FormControl(entity.active, [Validators.required]),
-      medical_specialties: new FormControl(entity.medical_specialties)
+    this.entityForm.patchValue({
+      company_name: entity.company_name,
+      fantasy_name: entity.fantasy_name,
+      cnpj: entity.cnpj,
+      region: entity.region,
+      opening_date: new Date(entity.opening_date),
+      active: entity.active,
+      medical_specialties: entity.medical_specialties
     });
+  }
+
+  private async handleEntity(id: string): Promise<void>{
+    this.entity = (await firstValueFrom(this.entityService.getEntity(id))).data!;
   }
 
   get medicalSpecialties(): FormControl {
@@ -63,7 +87,7 @@ export class FormComponent implements OnInit {
     if(!control.value.length)
       return;
 
-    this.medicalSpecialties.setValue(control.value);
+    this.medicalSpecialties.setValue(parseInt(control.value));
   }
 
   get region(): FormControl {
@@ -78,26 +102,20 @@ export class FormComponent implements OnInit {
   }
 
   private async initEntityForm(id?: string): Promise<void> {
-    this.entityFormType = this.handleFormType();
-
     if(this.entityFormType === 'invalid')
       this.router.navigate(['/list']);
 
-    if(id){
-      await this.handleEntity(id);
-    } else {
-      this.entityForm = new FormGroup({
-        company_name: new FormControl('', [Validators.required]),
-        fantasy_name: new FormControl('', [Validators.required]),
-        cnpj: new FormControl('', [Validators.required]),
-        region: new FormControl('', [Validators.required]),
-        opening_date: new FormControl('', [Validators.required]),
-        active: new FormControl(''),
-        medical_specialties: new FormControl([], [Validators.required, Validators.minLength(5)])
-      });
-    }
+    this.entityForm.reset({
+      company_name: '',
+      fantasy_name: '',
+      cnpj: '',
+      region: '',
+      opening_date: '',
+      active: '',
+      medical_specialties: []
+    });
 
-    this.initSelects();
+    await this.initSelects();
     this.cd.markForCheck();
   }
 
@@ -105,12 +123,18 @@ export class FormComponent implements OnInit {
     this.region.disable();
     this.medicalSpecialties.disable();
 
-    this.regionsList = await this.entityService.getRegions().finally(() => this.region.enable());
-    this.medicalSpecialtiesList = await this.entityService.getMedicalSpecialties().finally(() => this.medicalSpecialties.enable());
-  }
+    // Set Lists
+    this.regionsList = await this.entityService.getRegions();
+    this.medicalSpecialtiesList = Object.values((await firstValueFrom(this.entityService.getMedicalSpecialties())).data!) ?? [];
 
-  private async handleEntity(id: string): Promise<void>{
-    this.entity = await this.entityService.getEntity(id);
+    // Set Entity Form Select`s Values
+    this.medicalSpecialties.patchValue(
+      this.medicalSpecialties.value.map(
+        (specialty: string) => ((parseInt(specialty)))
+    ));
+
+    this.region.enable();
+    this.medicalSpecialties.enable();
   }
 
   private handleFormType(): 'edit' | 'create' | 'invalid' {
@@ -125,7 +149,44 @@ export class FormComponent implements OnInit {
     return 'invalid';
   }
 
-  filterSpecialtyLabel(id: string, list: SelectObject[]): string {
-    return list.filter(spec => spec.value === id)?.[0]?.label || '';
+  async onSubmit(): Promise<void> {
+    if (this.entityForm.invalid)
+      return;
+
+      try {
+        const sanitizeDate = this.shared.sanitizeDate(this.entityForm.value.opening_date)
+
+        if(!sanitizeDate) throw new Error;
+
+        this.entity = this.entityForm.value;
+        this.entity.opening_date = sanitizeDate;
+        this.shared.loading(true);
+
+        const savedEntity = (await firstValueFrom(this.entityService.setEntity(this.entity, this.entityId))).data
+
+        if(!savedEntity) return;
+
+        this.entityForm.reset();
+        this.entity = savedEntity;
+        await this.initSelects();
+
+        this.shared.openSnackBar('Entity Saved Successfully!')
+        this.cd.markForCheck();
+        this.shared.loading(false);
+      } catch (error) {
+        console.log(error);
+      }
+
+
+    // this.store.dispatch(addEntity({
+    //   entity: {
+    //     ...this.entityForm.value,
+    //     opening_date: (new DatePipe('en-US')).transform(this.entityForm.value.opening_date, 'yyyy-MM-dd')
+    //   }
+    // }));
+  }
+
+  filterSpecialtyLabel(id: number, list: MedicalSpecialty[]): string {
+    return list.filter(spec => spec.id === id)?.[0]?.value || '';
   }
 }

@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { loadUser } from 'src/app/store/global.action';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user/user.service';
+import { GlobalState } from 'src/app/models/global';
 
 @Component({
   selector: 'app-login',
@@ -25,11 +26,10 @@ export class LoginComponent implements OnInit {
 
   constructor(
     public shared: Shared,
-    private store: Store<{ user: UserState }>,
-    private router: Router,
-    private userService: UserService,
+    private store: Store<{ global: GlobalState }>,
+    private router: Router
   ) {
-    this.user$ = this.store.select(state => state.user);
+    this.user$ = this.store.select(state => state.global.user);
 
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.select(state => state.user.access_token).subscribe((token: string) => {
+    this.store.select(state => state.global.user.access_token).subscribe((token: string) => {
       if(token.length > 0) this.router.navigate(['/list']);
     })
   }

@@ -5,7 +5,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
 
 const routes: Routes = [
   { path: '', component: EntityComponent },
-  { path: 'editar', canActivate: [AuthGuard],
+  { path: 'editar',
   loadChildren: () => import('../../views/entity/form/form.module').then(m => m.FormModule)
   }
 ];

@@ -3,7 +3,6 @@ import { GlobalState } from "../models/global";
 import { UserState } from "../models/user";
 
 export const selectState = (state: GlobalState) => state;
-export const selectEntitiesState = (state: GlobalState) => state.entities;
 export const selectUserState = (state: UserState) => state;
 
 /**
@@ -24,27 +23,3 @@ export const selectUserError = createSelector(
   state => state.error
 );
 /**************************** */
-
-/**
- * Entities Selectors
- */
-export const selectEntities = createSelector(
-  selectEntitiesState,
-  state => state
-);
-
-export const selectLoading = createSelector(
-  selectState,
-  state => state.loading
-);
-
-export const selectError = createSelector(
-  selectState,
-  state => state.error
-);
-
-export const selectTotalEntities = createSelector(
-  selectState,
-  state => state.entities
-);
-
