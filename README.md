@@ -7,9 +7,8 @@ Espero que possamos conversar novamente, e obrigado pelo tempo dispensado aqui!
 
 # teste-full-stack
 
-## Front-end
-
 **Tecnologias Utilizadas**
+- Node v16.20.2 [⇗](https://nodejs.org/en/blog/release/v16.20.2)
 - Angular 13v [⇗](https://angular.io/docs)
 - AngularMaterial [⇗](https://material.angular.io/)
 - ReactiveForms [⇗](https://angular.io/guide/reactive-forms) 
@@ -20,6 +19,7 @@ Espero que possamos conversar novamente, e obrigado pelo tempo dispensado aqui!
 **Instalação**
 - Clone este repositório.
 - Inicie o docker-compose na raiz.
+- Inicie o servidor angular entrando na pasta `./frontend`, instalando as dependências `npm i` e depois `npm start`.
 - Não precisa configurar nada, já estará tudo configurado 😁 (Obs.: Alguns valores como o JWT_ACCESS_KEY deveriam vir do backend, porém, como o tempo foi apertado, não tive tempo de configurar tudo certinho, mas deixo claro que entendo a importância e que dados sensíveis não devem estar no código!)
 
 
