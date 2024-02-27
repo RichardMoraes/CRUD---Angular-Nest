@@ -42,7 +42,13 @@
               <!-- Region Form Field -->
               <mat-form-field appearance="fill">
                 <mat-label>Regional</mat-label>
-                <input matInput formControlName="region" readonly>
+                <mat-select matInput formControlName="region" readonly>
+                  <ng-container *ngFor="let region of regionsList">
+                    <mat-option [value]="region.value">
+                      {{ region.label }}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
               </mat-form-field>
               <!-- Medical Specialties Form Field -->
               <div class="cursor-pointer" (click)="shared.openMedicalSpecialtiesDialog(entity.medical_specialties)">

@@ -25,6 +25,8 @@ export class EntityComponent implements OnInit {
     active: new FormControl(''),
     medical_specialties: new FormControl([])
   });
+
+  regionsList!: {value?: string; label?: string}[];
   medicalSpecialtiesList!: MedicalSpecialty[];
 
   constructor(
@@ -88,6 +90,7 @@ export class EntityComponent implements OnInit {
     });
 
     await this.handleEntity(id);
+    this.regionsList = await this.entityService.getRegions();
     this.medicalSpecialtiesList = Object.values((await firstValueFrom(this.entityService.getMedicalSpecialties())).data!) ?? [];
 
     // Set Entity Form Select`s Values

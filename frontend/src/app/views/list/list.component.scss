@@ -105,72 +105,92 @@
       @apply
         w-full
         h-full
-        flex
-        flex-col
-        rounded-2xl
-        overflow-x-scroll;
+        rounded-2xl;
 
-      &::-webkit-scrollbar {
-        display: none;
-      }
-
-      table {
-        background-color: $white;
-
+      .not-found {
         @apply
-          w-5/6
+          w-3/4
           h-full
           mx-auto
-          p-10
-          rounded-2xl;
-
-        ::ng-deep .mat-sort-header-container {
-          @apply
-            pl-4
-            justify-center;
-        }
-
-        .mat-header-cell, .mat-cell {
-          text-align: center;
-          text-align: -webkit-center;
-
-          @apply
-            text-xl
-            overflow-ellipsis
-            text-nowrap;
-        }
-
-        .mat-cell {
-          &.medical-specialties {
-            @apply
-              text-lg
-              cursor-pointer;
-
-              &:hover {
-                .icon{
-                  @apply
-                  transition-all
-                  scale-110;
-                }
-              }
-          }
-
-          &.actions {
-            button {
-              @apply
-              transition-transform
-              hover:scale-125;
-          }
-        }
-        }
+          flex
+          flex-col
+          items-center
+          justify-center
+          gap-10
+          text-3xl
+          text-center;
       }
 
-      #pagination {
-        background-color: transparent;
-
+      .data-table {
         @apply
+          w-full
+          h-full
           flex
-          justify-center;
+          flex-col
+          overflow-x-scroll;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
+        table {
+          background-color: $white;
+
+          @apply
+            w-5/6
+            h-full
+            mx-auto
+            p-10
+            rounded-2xl;
+
+          ::ng-deep .mat-sort-header-container {
+            @apply
+              pl-4
+              justify-center;
+          }
+
+          .mat-header-cell, .mat-cell {
+            text-align: center;
+            text-align: -webkit-center;
+
+            @apply
+              text-xl
+              overflow-ellipsis
+              text-nowrap;
+          }
+
+          .mat-cell {
+            &.medical-specialties {
+              @apply
+                text-lg
+                cursor-pointer;
+
+                &:hover {
+                  .icon{
+                    @apply
+                    transition-all
+                    scale-110;
+                  }
+                }
+            }
+
+            &.actions {
+              button {
+                @apply
+                transition-transform
+                hover:scale-125;
+            }
+          }
+          }
+        }
+
+        #pagination {
+          background-color: transparent;
+
+          @apply
+            flex
+            justify-center;
+        }
       }
     }
   }

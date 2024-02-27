@@ -48,6 +48,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   pageSize: number = 5;
   totalItems$!: Observable<number>;
   medicalSpecialtiesList!: MedicalSpecialty[];
+  notFoundData: boolean = false;
   /*************************************** */
 
   constructor(
@@ -115,10 +116,20 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   private async initTable(search?: string): Promise<void> {
     this.entities = Object.values(await this.handleEntities(search));
 
-    this.tableData = this.entities;
-    this.dataSource.sort = this.sort;
+    console.log(this.entities)
 
-    this.setColumns();
+    if(this.entities?.length > 0) {
+      this.notFoundData = false;
+      this.tableData = this.entities;
+      this.dataSource.sort = this.sort;
+
+      this.setColumns();
+    } else {
+      this.notFoundData = true;
+    }
+
+    console.log(this.notFoundData)
+
     this.cd.markForCheck();
   }
 
@@ -158,10 +169,6 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   announceSortChange(sortState: Sort) {
-    // This example uses English messages. If your application supports
-    // multiple language, you would internationalize these strings.
-    // Furthermore, you can customize the message to add additional
-    // details about the values being sorted.
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {
