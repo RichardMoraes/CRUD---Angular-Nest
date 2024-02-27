@@ -5,7 +5,7 @@ import { DataSourceOptions } from 'typeorm';
 
 export const config: DataSourceOptions = {
   type: 'mysql',
-  host: 'localhost',
+  host: 'mysql',
   port: 3306,
   username: 'backend',
   password: 'q1Q!q1Q!',

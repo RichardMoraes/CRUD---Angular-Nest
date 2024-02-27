@@ -1,22 +1,5 @@
 version: '3.8'
 services:
-  nest:
-    build: ./backend
-    ports:
-      - '3000:3000'
-    environment:
-      MYSQL_USER: backend
-      MYSQL_PASSWORD: q1Q!q1Q!
-      MYSQL_DATABASE: crud
-    depends_on:
-      - mysql
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-    depends_on:
-      - mysql
   mysql:
     image: mysql:latest
     restart: always
@@ -29,3 +12,21 @@ services:
       MYSQL_DATABASE: crud
     volumes:
       - ./medical_specialty.sql:/docker-entrypoint-initdb.d/medical_specialty.sql
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql
+  nest:
+    build: ./backend
+    ports:
+      - '3000:3000'
+    environment:
+      MYSQL_USER: backend
+      MYSQL_PASSWORD: q1Q!q1Q!
+      MYSQL_DATABASE: crud
+    depends_on:
+      - mysql
+

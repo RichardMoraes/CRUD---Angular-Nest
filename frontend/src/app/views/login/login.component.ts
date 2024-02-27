@@ -2,12 +2,10 @@ import { ChangeDetectionStrategy, OnDestroy, OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Shared } from 'src/app/shared/shared';
-import { User, UserState } from 'src/app/models/user';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { loadUser } from 'src/app/store/global.action';
 import { Router } from '@angular/router';
-import { UserService } from 'src/app/services/user/user.service';
 import { GlobalState } from 'src/app/models/global';
 
 @Component({
@@ -18,7 +16,6 @@ import { GlobalState } from 'src/app/models/global';
 })
 export class LoginComponent implements OnInit,OnDestroy {
   private userSubscription: Subscription | undefined;
-  private user$!: Observable<User>
   /**
    * Login Form Control
    */
@@ -30,8 +27,6 @@ export class LoginComponent implements OnInit,OnDestroy {
     private store: Store<{ global: GlobalState }>,
     private router: Router
   ) {
-    this.user$ = this.store.select(state => state.global.user);
-
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$')])
@@ -41,12 +36,16 @@ export class LoginComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userSubscription = this.user$.subscribe((user: User) => {
-      if(user.access_token.length > 0) this.router.navigate(['/list']);
+    this.userSubscription = this.store.select(state => state.global).subscribe((global: GlobalState) => {
+      if(global.user.access_token.length > 0) this.router.navigate(['/list']);
+
+      if(global.loading) this.shared.loading(true, 'Fazendo login...');
+
+      if(global.error) this.shared.loading(false, global.error.error.mesage, 5000)
     })
   }
 
-  onSubmit(e: any) {
+  onSubmit() {
     const { email, password } = this.loginForm.value
 
     this.store.dispatch(loadUser({ email, password }));

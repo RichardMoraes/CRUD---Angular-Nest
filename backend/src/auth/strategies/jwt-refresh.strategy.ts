@@ -10,6 +10,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
   'jwt-refresh',
 ) {
   constructor(private usersService: UsersService) {
+    // TODO: Set to dotenv
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: express.Request) => {
@@ -17,7 +18,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
         },
       ]),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_REFRESH_ACCESS_KEY,
+      secretOrKey: 'rKWr9Wp3dcU2hX8w@*9a4$Mz2uTYMhB',
     });
   }
 
