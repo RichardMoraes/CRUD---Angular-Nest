@@ -1,3 +1,10 @@
+
+# Título do Projeto
+
+Primeiramente obrigado pela oportunidade e pelo incrível desafio! Dei meu melhor para fazer um projeto robusto e concreto no tempo designado, infelizmente não está perfeito, faltaram muitas coisas que eu gostária de ter implementado/melhorado, porém, tenho certeza que com esse projeto, será possível medir minha proeficiência e competencia como Dev.
+
+Espero que possamos conversar novamente, e obrigado pelo tempo dispensado aqui!
+
 # teste-full-stack
 
 ## Front-end
@@ -21,3 +28,4 @@
 - Existe um arquivo nomeado de ``endpoints-insomnia.json``, basta importa-lo no insomnia e verá as rotas de interação da aplicação.
 
 ----
+
