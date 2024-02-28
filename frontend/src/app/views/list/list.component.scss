@@ -77,9 +77,18 @@
         @apply
           my-5;
 
-        label {
+        .search {
           @apply
             left-3
+            w-5
+            h-full
+            flex
+            items-center;
+        }
+
+        .clean {
+          @apply
+            right-5
             w-5
             h-full
             flex
@@ -109,7 +118,7 @@
 
       .not-found {
         @apply
-          w-3/4
+          lg:w-3/4
           h-full
           mx-auto
           flex

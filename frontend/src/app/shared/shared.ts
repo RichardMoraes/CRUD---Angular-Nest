@@ -12,7 +12,7 @@ import { UserService } from '../services/user/user.service';
 import { removeUser } from '../store/global.action';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { GlobalState } from '../models/global';
+import { GlobalState, Loading } from '../models/global';
 
 interface FormError {
   group: FormGroup,
@@ -33,23 +33,36 @@ export class Shared {
     public dialog: MatDialog,
   ) {}
 
-  loading(loading: boolean, message?: string, duration?: number): void {
-    this.loadingSubject.next(loading);
-    document.body.style.overflow = 'hidden';
+  async loading(options: Loading): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const snackBarRef = this.snackBar.openFromComponent(SnackBarComponent, {
+        data: options.message,
+        duration: options.duration,
+        verticalPosition: 'top',
+        panelClass: options.type
+      });
 
-    if(message) this.openSnackBar(message, duration ?? undefined);
-  }
-
-  openSnackBar(message: string, duration?: number): void {
-    this.snackBar.openFromComponent(SnackBarComponent, {
-      data: message,
-      duration: duration ?? 3000,
+      snackBarRef.afterDismissed().subscribe(() => {
+        resolve();
+      });
     });
   }
 
   openMedicalSpecialtiesDialog(specialties: string[]){
     this.dialog.open(MedicalSpecialtiesComponent, {
       data: specialties,
+    });
+  }
+
+  disableForm(form: FormGroup, disabled: boolean) {
+    Object.keys(form.controls).forEach(key => {
+      if (disabled) {
+        form.get(key)?.disable();
+        form.disable();
+      } else {
+        form.get(key)?.enable();
+        form.enable();
+      }
     });
   }
 
@@ -86,7 +99,7 @@ export class Shared {
   }
 
   logout(): void {
-    this.userService.logout().then((res) => {
+    this.userService.logout().then(() => {
       this.store.dispatch(removeUser());
       this.router.navigate(['/login']);
     }).catch(error => {

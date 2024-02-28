@@ -6,9 +6,15 @@
         <button mat-raised-button class="default" [routerLink]="['/criar']">Nova Entidade</button>
       </div>
       <div class="search-input relative">
-        <label for="search" class="absolute pointer-events-none">
-          <mat-icon>search</mat-icon>
+        <label for="search" class="search absolute pointer-events-none">
+          <lucide-icon name="search"></lucide-icon>
         </label>
+        <ng-container *ngIf="route.snapshot.queryParams['search']">
+          <span for="search" class="clean absolute cursor-pointer"
+          (click)="searchInputTerm$.next('')">
+            <lucide-icon name="trash-2"></lucide-icon>
+          </span>
+        </ng-container>
         <input id="search" type="text" [(ngModel)]="searchInputModel" (keyup.enter)="onSearchChange($event)" (input)="onSearchChange($event)" #searchInput>
       </div>
     </header>
@@ -103,7 +109,7 @@
           <span class="inline-block">
             <lucide-icon name="frown" class="w-28 h-28"></lucide-icon>
           </span>
-          <p>Não foram encontrados resultados.</p>
+          <p class="text-xl">Não foram encontrados resultados.</p>
         </div>
       </div>
     </div>

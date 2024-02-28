@@ -3,12 +3,17 @@
   <img src="../../../assets/images/background/wave-orange.png" alt="Orange wave" class="absolute right-0 h-screen" #orangeWave>
   <img src="../../../assets/images/background/wave-white.png" alt="White wave" class="absolute right-0 h-screen" #whiteWave>
   <ng-container *ngIf="asideMenu">
-    <aside class="absolute z-50 left-5 top-5">
-      <div class="">
-        <button mat-fab extended
-        (click)="logout()">
-          <mat-icon>logout</mat-icon>
+    <aside class="absolute z-50">
+      <div>
+        <button mat-button mat-fab extended [matMenuTriggerFor]="menu">
+          <lucide-icon name="menu"></lucide-icon>
         </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="logout()">
+            <lucide-icon name="log-out"></lucide-icon>
+            Logout
+          </button>
+        </mat-menu>
       </div>
     </aside>
   </ng-container>

@@ -27,6 +27,7 @@ services:
       MYSQL_USER: backend
       MYSQL_PASSWORD: q1Q!q1Q!
       MYSQL_DATABASE: crud
+      ALLOWED_ORIGINS: http://localhost:4200,http://192.168.0.239:4200,http://0.0.0.0:4200
     depends_on:
       - mysql
 

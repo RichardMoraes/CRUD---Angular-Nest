@@ -6,3 +6,11 @@ export interface GlobalState {
   loading: boolean;
   error: any;
 }
+
+export interface Loading {
+  type: 'default' | 'loading' | 'error',
+  message: string,
+  duration: number
+}
+
+

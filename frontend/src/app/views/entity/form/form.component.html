@@ -1,8 +1,8 @@
 
 
-<main id="details-component">
-  <section id="details-section">
-    <div id="details-container">
+<main id="form-component">
+  <section id="form-section">
+    <div id="form-container">
       <ng-container *ngIf="entityForm">
         <form [formGroup]="entityForm">
           <header>
@@ -11,7 +11,8 @@
             </h1>
             <ng-container *ngIf="entityFormType === 'edit'">
               <button mat-raised-button class="default"
-              (click)="deleteEntity()">
+              (click)="deleteEntity()"
+              [disabled]="entityForm.disabled">
                 Excluir
               </button>
             </ng-container>
@@ -123,9 +124,9 @@
               <div class="w-full md:w-3/5 xl:w-2/5 max-xs:flex-col-reverse flex justify-around items-center gap-5">
                 <button mat-raised-button class="default cancel"
                 [routerLink]="['/']">
-                  Cancelar
+                  Voltar
                 </button>
-                <button mat-raised-button type="submit" class="default"
+                <button mat-raised-button type="submit" class="default" #submit
                 (click)="onSubmit()"
                 [disabled]="entityForm.invalid || !entityForm.touched">
                   Enviar
@@ -133,7 +134,8 @@
               </div>
               <ng-container *ngIf="entityFormType === 'edit'">
                 <button mat-raised-button class="mobile-delete default"
-                (click)="deleteEntity()">
+                (click)="deleteEntity()"
+                [disabled]="entityForm.disabled">
                   Excluir
                 </button>
               </ng-container>

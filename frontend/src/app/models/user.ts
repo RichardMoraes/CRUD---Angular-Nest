@@ -2,8 +2,6 @@ export interface UserState {
   id: number;
   email: string;
   access_token: string;
-  loading: boolean;
-  error: any;
 }
 
 export interface User {

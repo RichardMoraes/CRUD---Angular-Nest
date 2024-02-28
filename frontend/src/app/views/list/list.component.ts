@@ -54,10 +54,10 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private store: Store<{ global: GlobalState }>,
     private _liveAnnouncer: LiveAnnouncer,
-    private route: ActivatedRoute,
     private router: Router,
     private cd: ChangeDetectorRef,
     private entityService: EntityService,
+    public route: ActivatedRoute,
     public shared: Shared
   ) {
     /**
@@ -69,11 +69,14 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
       )
       .subscribe({
         next: (res: string) => {
-          router.navigate([], (
-            res?.trim().length
-            ? { queryParams: { search: shared.slugify(res) }}
-            : undefined
-          ));
+          const searchString = res?.trim();
+
+          if(searchString !== this.route.snapshot.queryParams['search'])
+            router.navigate([], (
+              searchString.length
+              ? { queryParams: { search: shared.slugify(res) }}
+              : undefined
+            ));
         },
         error: (error) => {
           console.error(error);
@@ -133,7 +136,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cd.markForCheck();
   }
 
-  private setColumns() {
+  private setColumns(): void {
     const tableBreakpoints ={
       xs: 0,
       sm: 600,
@@ -168,7 +171,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.searchInputTerm$.next(inputValue);
   }
 
-  announceSortChange(sortState: Sort) {
+  announceSortChange(sortState: Sort): void {
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {
@@ -176,12 +179,12 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  onViewClick(el: Entity) {
+  onViewClick(el: Entity): void {
     console.log(el)
     this.router.navigate(['list', el.id]);
   }
 
-  onEditClick(el: Entity) {
+  onEditClick(el: Entity): void {
     console.log(el)
     this.router.navigate(['list', el.id, 'editar']);
   }

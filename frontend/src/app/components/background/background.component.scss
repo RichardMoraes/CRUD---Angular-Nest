@@ -33,7 +33,13 @@ img {
 aside {
   pointer-events: all;
 
-  ::ng-deep button {
+  @apply
+    max-lg:right-2
+    max-lg:bottom-2
+    lg:left-5
+    lg:top-5;
+
+  ::ng-deep .mat-button {
     background-color: $black !important;
 
     // &:hover {
@@ -41,5 +47,18 @@ aside {
     //   opacity: .8;
     //   transform: scale(.9);
     // }
+  }
+}
+
+::ng-deep .mat-menu-panel{
+  @apply
+    my-2;
+
+  .mat-menu-item {
+    @apply
+      flex
+      items-center
+      justify-center
+      gap-3;
   }
 }

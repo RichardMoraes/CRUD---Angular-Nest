@@ -4,9 +4,7 @@ import { UserState } from '../models/user';
 export const initialUserState: UserState = {
   id: 0,
   email: '',
-  access_token: '',
-  loading: false,
-  error: null
+  access_token: ''
 };
 
 export const initialGlobalState: GlobalState = {

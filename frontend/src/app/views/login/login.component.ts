@@ -29,26 +29,51 @@ export class LoginComponent implements OnInit,OnDestroy {
   ) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$')])
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]+$')
+      ])
     });
 
     this.hidePassword = true;
   }
 
   ngOnInit(): void {
-    this.userSubscription = this.store.select(state => state.global).subscribe((global: GlobalState) => {
-      if(global.user.access_token.length > 0) this.router.navigate(['/list']);
+    this.userSubscription = this.store.select(state => state.global)
+    .subscribe(async (global: GlobalState) => {
+      if(global.user.access_token.length > 0)
+        await this.shared.loading({
+          type: 'default',
+          message: 'Sucesso! Redirecionando...',
+          duration: 2000
+        }).then(() => {
+          this.router.navigate(['/list']);
+        });
 
-      if(global.loading) this.shared.loading(true, 'Fazendo login...');
-
-      if(global.error) this.shared.loading(false, global.error.error.mesage, 5000)
+      if(global.error)
+        await this.shared.loading({
+          type: 'error',
+          message: global.error.error.message ?? 'Erro no login, verifique suas credênciais.',
+          duration: 1000
+        })
+        .then(() => {
+          this.shared.disableForm(this.loginForm, false);
+        });
     })
   }
 
-  onSubmit() {
+  async onSubmit() {
     const { email, password } = this.loginForm.value
 
-    this.store.dispatch(loadUser({ email, password }));
+    this.shared.disableForm(this.loginForm, true);
+    this.shared.loading({
+      type: 'loading',
+      message: 'Fazendo login...',
+      duration: 3000
+    }).then(() => {
+      this.store.dispatch(loadUser({ email, password }));
+    })
   }
 
   ngOnDestroy(): void {

@@ -1,13 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Shared } from 'src/app/shared/shared';
 import { EntityService } from '../services/entity.service';
-import { GlobalState } from 'src/app/models/global';
 import { Entity } from '../models/entity';
-import { Store } from '@ngrx/store';
-import { DatePipe } from '@angular/common';
-import { catchError, firstValueFrom, throwError } from 'rxjs';
+import { firstValueFrom, throwError } from 'rxjs';
 import { MedicalSpecialty } from 'src/app/components/medical-specialties/models/medical-specialties';
 
 @Component({
@@ -105,7 +102,7 @@ export class FormComponent implements OnInit {
     this.region.setValue(control.value);
   }
 
-  private async initEntityForm(id?: string): Promise<void> {
+  private async initEntityForm(): Promise<void> {
     if(this.entityFormType === 'invalid')
       this.router.navigate(['/list']);
 
@@ -153,28 +150,22 @@ export class FormComponent implements OnInit {
     return 'invalid';
   }
 
-  private disableForm(disable: boolean) {
-    Object.keys(this.entityForm.controls).forEach(key => {
-      if (disable) {
-        this.entityForm.get(key)?.disable();
-      } else {
-        this.entityForm.get(key)?.enable();
-      }
-    });
-  }
-
   async onSubmit(): Promise<void> {
     if (this.entityForm.invalid)
       return;
 
-      this.shared.loading(true, 'Salvando...', 10000);
-      this.disableForm(true);
+      this.shared.disableForm(this.entityForm, true);
+      await this.shared.loading({
+        type: 'loading',
+        message: 'Salvando...',
+        duration: 3000
+      });
 
       const sanitizeDate = this.shared.sanitizeDate(this.entityForm.value.opening_date)
 
       if(!sanitizeDate) throw new Error;
 
-      this.entity = this.entityForm.value;
+      this.entity = {...this.entity, ...this.entityForm.value };
       this.entity.opening_date = sanitizeDate;
 
       await firstValueFrom(this.entityService.setEntity(this.entity, this.entityFormType === 'edit' ? this.entityId : undefined)).then(async (res) => {
@@ -182,40 +173,70 @@ export class FormComponent implements OnInit {
 
         if(!savedEntity) return throwError(() => 'Error to Save Entity');
 
-        if(this.entityFormType === 'edit'){
-          await this.initSelects();
-        } else {
-          this.router.navigate(['list', savedEntity.id, 'editar'])
-        }
 
-        this.shared.loading(false, 'Entidade salva com sucesso!');
+        await this.shared.loading({
+          type: 'default',
+          message: 'Entidade salva com sucesso!',
+          duration: 3000
+        });
+
+        if(this.entityFormType === 'create')
+          this.router.navigate(['list', savedEntity.id, 'editar'])
+
         return;
-      }).catch(error => {
+      }).catch(async error => {
         if(error.status !== 401)
-          this.shared.loading(false, error.error.message, 5000);
+          await this.shared.loading({
+            type: 'error',
+            message: error.error.message,
+            duration: 5000
+          });
       }).finally(() => {
-        this.disableForm(false);
+        this.shared.disableForm(this.entityForm, false);
       });
 
 
   }
 
   async deleteEntity(): Promise<void> {
+    console.log(this.entity)
     if(!this.entity){
-      this.shared.loading(false, 'A entidade não existe e não pode ser deletada', 10000);
+      await this.shared.loading({
+        type: 'error',
+        message: 'Erro ao deletar entidade',
+        duration: 3000
+      });
+
+      this.router.navigate(['/list']);
       return;
     }
 
-    this.disableForm(true);
-    await firstValueFrom(this.entityService.deleteEntity(this.entity.id)).then(async (res) => {
+    this.shared.disableForm(this.entityForm, true);
+    await this.shared.loading({
+      type: 'loading',
+      message: 'Excluíndo entidade...',
+      duration: 3000
+    });
+    await firstValueFrom(this.entityService.deleteEntity(this.entity.id)).then(async () => {
       this.router.navigate(['list']);
-      this.shared.loading(false, 'Entidade excluída com sucesso!');
+      await this.shared.loading({
+        type: 'default',
+        message: 'Entidade excluída com sucesso!',
+        duration: 3000
+      });
+
       return;
-    }).catch(error => {
+    }).catch(async error => {
       if(error.status !== 401)
-        this.shared.loading(false, error.error.message, 5000);
+        await this.shared.loading({
+          type: 'error',
+          message: error.error.message,
+          duration: 5000
+        });
+
+        this.router.navigate(['/list']);
     }).finally(() => {
-      this.disableForm(false);
+      this.shared.disableForm(this.entityForm, false);
     });
   }
 }

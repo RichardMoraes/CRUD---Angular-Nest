@@ -27,19 +27,23 @@
                 [type]="hidePassword ? 'password' : 'text'"
                 required
               >
-              <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Esconder senha'" [attr.aria-pressed]="hidePassword">
+              <button mat-icon-button matSuffix type="button" [attr.aria-label]="'Esconder senha'" [attr.aria-pressed]="hidePassword"
+              [disabled]="loginForm.get('password')?.disabled"
+              (click)="hidePassword = !hidePassword">
                 <mat-icon class="hide-icon">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
               </button>
               <!-- Handling Password Error -->
               <mat-error *ngIf="loginForm.get('password')?.invalid">
-                {{ shared.getErrorMessage({group: loginForm, control: 'password'}) }}
+                <span class="inline-block text-xs text-center lg:text-start">
+                  Sua senha deve conter no mínimo 8 caracteres, ao menos uma letra maiúscula e um número
+                </span>
               </mat-error>
             </mat-form-field>
           </div>
           <br>
           <button mat-raised-button type="submit"
             class="default"
-            [disabled]="loginForm.invalid">
+            [disabled]="loginForm.invalid || loginForm.disabled">
             Enviar
           </button>
         </div>

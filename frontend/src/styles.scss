@@ -66,7 +66,8 @@ button {
   @apply
     text-3xl
     font-bold
-    self-center;
+    self-center
+    text-center;
 
     @screen md {
       @apply

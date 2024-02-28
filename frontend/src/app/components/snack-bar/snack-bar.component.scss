@@ -1,0 +1,65 @@
+@import 'src/styles.scss';
+
+::ng-deep .mat-snack-bar-container {
+  background: $black;
+  color: $white;
+
+  @apply
+    font-bold
+    text-center
+    text-base;
+
+  &.default {
+    animation: color-change-default .3s linear .1s alternate both;
+
+    @keyframes color-change-default {
+      0% {
+        color: $black;
+        background: $white;
+      }
+      100% {
+        color: $white;
+        background: $blue-vivid;
+      }
+    }
+  }
+
+  &.loading {
+    animation: color-change 1s cubic-bezier(0.445, 0.050, 0.550, 0.950) 0.1s infinite alternate both;
+
+    @keyframes color-change {
+      0% {
+        background: $black;
+      }
+      50% {
+        background: $blue-vivid;
+      }
+      100% {
+        background: $orange;
+      }
+    }
+  }
+
+  &.error {
+    animation: color-change-error .3s linear .1s alternate both;
+
+    @keyframes color-change-error {
+      0% {
+        background: $black;
+      }
+      100% {
+        background: $red;
+      }
+    }
+  }
+
+  @keyframes slide-top {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(-100px);
+    }
+  }
+}

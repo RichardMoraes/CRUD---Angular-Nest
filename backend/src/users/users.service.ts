@@ -27,7 +27,7 @@ export class UsersService {
 
       return await this.userRepository.save(user);
     } catch (error) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Erro no login, verifique suas credênciais.');
     }
   }
 
@@ -47,11 +47,11 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOneBy({ id });
 
-      if (!user) throw new NotFoundException('User not found');
+      if (!user) throw new NotFoundException('Erro no login, verifique suas credênciais.');
 
       return user;
     } catch (error) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Erro no login, verifique suas credênciais.');
     }
   }
 
@@ -59,11 +59,11 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOneBy({ email });
 
-      if (!user) throw new NotFoundException('User not found');
+      if (!user) throw new NotFoundException('Erro no login, verifique suas credênciais.');
 
       return user;
     } catch (error) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Erro no login, verifique suas credênciais.');
     }
   }
 
@@ -71,7 +71,7 @@ export class UsersService {
     try {
       const user = await this.userRepository.update(id, updateUserDto);
 
-      if (!user) throw new NotFoundException('User not found');
+      if (!user) throw new NotFoundException('Erro no login, verifique suas credênciais.');
 
       return await this.userRepository.findOneBy({ id });
     } catch (error) {

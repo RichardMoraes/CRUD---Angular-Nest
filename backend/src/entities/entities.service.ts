@@ -110,7 +110,7 @@ export class EntitiesService {
     try {
       return await this.entityRepository.delete(id);
     } catch (error) {
-      throw new UnprocessableEntityException('Error deleting Entity');
+      throw new UnprocessableEntityException('Erro ao deletar entidade');
     }
   }
 
