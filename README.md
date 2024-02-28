@@ -13,14 +13,14 @@ Espero que possamos conversar novamente, e obrigado pelo tempo dispensado aqui!
 - AngularMaterial [⇗](https://material.angular.io/)
 - ReactiveForms [⇗](https://angular.io/guide/reactive-forms) 
 - Tailwind[⇗](https://tailwindcss.com/)
-- AngularRoutar [⇗](https://angular.io/guide/routing-overview)
+- AngularRouter [⇗](https://angular.io/guide/routing-overview)
 
 ----
 **Instalação**
 - Clone este repositório.
 - Inicie o docker-compose na raiz.
 - Inicie o servidor angular entrando na pasta `./frontend`, instalando as dependências `npm i` e depois `npm start`.
-- Não precisa configurar nada, já estará tudo configurado 😁 (Obs.: Alguns valores como o JWT_ACCESS_KEY deveriam vir do backend, porém, como o tempo foi apertado, não tive tempo de configurar tudo certinho, mas deixo claro que entendo a importância e que dados sensíveis não devem estar no código!)
+- Não precisa configurar nada, já estará tudo configurado 😁 (Obs.: Alguns valores como o JWT_ACCESS_KEY deveriam vir do .env, porém, como o tempo foi apertado, não tive tempo de configurar tudo certinho, mas deixo claro que entendo a importância e que dados sensíveis não devem estar no código!)
 
 
 **Endpoints**
