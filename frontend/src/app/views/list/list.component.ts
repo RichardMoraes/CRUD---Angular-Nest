@@ -6,9 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Shared } from 'src/app/shared/shared';
 import { MatPaginator } from '@angular/material/paginator';
-import { Store } from '@ngrx/store';
 import { Entity } from '../entity/models/entity';
-import { GlobalState } from 'src/app/models/global';
 import { EntityService } from '../entity/services/entity.service';
 import { MedicalSpecialty } from 'src/app/components/medical-specialties/models/medical-specialties';
 
@@ -29,7 +27,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   onResize() {
     this.clientWidth = window.innerWidth;
     this.setColumns();
-  };
+  }
   /*************************************** */
   /**
    * Search Input
@@ -52,7 +50,6 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   /*************************************** */
 
   constructor(
-    private store: Store<{ global: GlobalState }>,
     private _liveAnnouncer: LiveAnnouncer,
     private router: Router,
     private cd: ChangeDetectorRef,
